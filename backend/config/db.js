@@ -7,6 +7,7 @@ const sequelize = new Sequelize(process.env.DB_NAME, process.env.DB_USER, proces
   dialect: 'mysql',
 });
 
+console.log('Intentando conectar a la base de datos...');
 sequelize.authenticate()
   .then(() => console.log('Conexión a la base de datos exitosa'))
   .catch(err => console.error('Error al conectar a la base de datos:', err));

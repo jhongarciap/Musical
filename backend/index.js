@@ -3,11 +3,15 @@ require('dotenv').config();
 const express = require('express');
 const sequelize = require('./config/db');
 const User = require('./models/userModel');  // Importa el modelo
+const authRoutes = require('./routes/authRoutes');  // Importa las rutas de autenticación
 
 const app = express();
 
 // Middleware para procesar JSON
 app.use(express.json());
+
+// Usa las rutas de autenticación
+app.use('/api/auth', authRoutes);  // Ahora /api/auth/lastfm está disponible
 
 // Sincroniza el modelo con la base de datos
 sequelize.sync()
@@ -15,7 +19,7 @@ sequelize.sync()
   .catch(err => console.error('Error al sincronizar la base de datos:', err));
 
 // Puerto del servidor
-const PORT = process.env.PORT || 3001;
+const PORT = process.env.PORT || 3002;
 app.listen(PORT, () => {
   console.log(`Servidor corriendo en el puerto ${PORT}`);
 });

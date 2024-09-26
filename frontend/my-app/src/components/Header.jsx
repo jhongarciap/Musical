@@ -3,6 +3,11 @@ import React, { useState } from "react";
 function Header() {
   const [isHovered, setIsHovered] = useState(false);
 
+  const handleLogin = () => {
+    // Redirige al backend para iniciar la autenticación con Last.fm
+    window.location.href = 'http://localhost:3001/api/auth/lastfm';
+  };
+  
   return (
     <header
       style={{
@@ -51,6 +56,7 @@ function Header() {
         }}
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
+        onClick={handleLogin}  // Agregado el evento onClick para redirigir al backend
       >
         Ingresa con Last.fm
         {/* Imagen SVG a la derecha del texto */}
