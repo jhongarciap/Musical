@@ -16,15 +16,15 @@ function Footer() {
     >
       {/* Nombres alineados a la izquierda */}
       <div style={{ textAlign: 'left' }}>
-        <p style={{ margin: '0' }}>
+        <p style={{ margin: '0', fontFamily: "'Roboto Condensed', sans-serif" }}>
           Jhon Alejandro García Pareja
           <br />
-          David Tovar Zurita
+          David Felipe Tovar Zurita
         </p>
       </div>
 
       {/* Proyecto de clase centrado */}
-      <p style={{ margin: '0', textAlign: 'center', flexGrow: 1 }}>
+      <p style={{ margin: '0', textAlign: 'center', flexGrow: 1, fontFamily: "'Roboto Condensed', sans-serif" }}>
         Proyecto de clase
       </p>
 

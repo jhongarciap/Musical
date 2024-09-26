@@ -24,19 +24,18 @@ function Header() {
         padding: '0 1.5rem',
       }}
     >
-      {/* Imagen SVG centrada */}
-      <img
-        loading="lazy"
-        src="https://cdn.builder.io/api/v1/image/assets/TEMP/4ef9abeb93c26e786aa1e21b897530320d828dc2090ca32a64176378c96d4988?placeholderIfAbsent=true&apiKey=18c784e0a59f473995023f0319e731fa"
-        alt="Logo"
-        style={{
-          height: '60px',
-          objectFit: 'contain',
-          position: 'absolute',
-          left: '50%',
-          transform: 'translateX(-50%)',
-        }}
-      />
+      {/* Envolviendo la imagen en un enlace para redirigir */}
+      <a href="/" style={{ textDecoration: 'none', position: 'absolute', left: '50%', transform: 'translateX(-50%)' }}>
+        <img
+          loading="lazy"
+          src="https://cdn.builder.io/api/v1/image/assets/TEMP/4ef9abeb93c26e786aa1e21b897530320d828dc2090ca32a64176378c96d4988?placeholderIfAbsent=true&apiKey=18c784e0a59f473995023f0319e731fa"
+          alt="Logo"
+          style={{
+            height: '60px',
+            objectFit: 'contain',
+          }}
+        />
+      </a>
 
       {/* Botón a la derecha con texto e imagen */}
       <button
@@ -53,6 +52,7 @@ function Header() {
           justifyContent: 'center',
           gap: '0.5rem',
           transition: 'background-color 0.3s ease',
+          fontFamily: "'Roboto Condensed', sans-serif", // Añadir la fuente aquí
         }}
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}

@@ -41,7 +41,7 @@ function Hero() {
       >
         <h1
           style={{
-            fontSize: '25px', // Tamaño de letra grande
+            fontSize: '35px', // Tamaño de letra grande
             fontFamily: "'Roboto Condensed', sans-serif",
             overflow: 'hidden', // Evitar el desbordamiento
             marginLeft: '-20%', // Acercar un poco al centro
@@ -53,7 +53,7 @@ function Hero() {
         <p
           style={{
             marginTop: '0.5rem', // Reducido el margen superior
-            fontSize: '18px', // Tamaño de letra pequeño
+            fontSize: '20px', // Tamaño de letra pequeño
             fontFamily: "'Roboto Condensed', sans-serif",
             lineHeight: '1.5', // Separación entre líneas
             marginLeft: '-20%', // Acercar un poco al centro
