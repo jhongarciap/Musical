@@ -37,7 +37,7 @@ function Header() {
         />
       </a>
 
-      {/* Botón a la derecha con texto e imagen */}
+      {/* Botón de iniciar sesión con Last.fm */}
       <button
         style={{
           height: '40px',
@@ -56,7 +56,7 @@ function Header() {
         }}
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
-        onClick={handleLogin}  // Agregado el evento onClick para redirigir al backend
+        onClick={handleLogin}  // Redirigir al backend al hacer clic
       >
         Ingresa con Last.fm
         {/* Imagen SVG a la derecha del texto */}

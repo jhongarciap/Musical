@@ -1,6 +1,6 @@
 const axios = require('axios');
 const { generateSignature } = require('../utils/generateSignature');
-const User = require('../models/userModel'); // Asegúrate de usar el modelo
+const User = require('../models/userModel');
 
 // Redirige a Last.fm para autenticación
 const redirectToLastFm = (req, res) => {
@@ -33,6 +33,7 @@ const lastFmCallback = async (req, res) => {
       return res.status(400).json({ error: 'Sesión inválida' });
     }
 
+    req.session.username = session.name;
     // Obtener detalles del perfil del usuario
     const profileResponse = await axios.get(
       `https://ws.audioscrobbler.com/2.0/?method=user.getinfo&user=${session.name}&api_key=${apiKey}&format=json`
@@ -51,7 +52,11 @@ const lastFmCallback = async (req, res) => {
         is_pro: isPro,  // Almacenar el estado de suscripción
       }
     });
-    
+
+    if (!user) {
+      return res.status(500).json({ error: 'No se pudo crear o encontrar el usuario' });
+    }
+
     if (!created) {
       // Si el usuario ya existe, actualiza la imagen de perfil y el estado Pro
       user.profile_image = profileImage;
@@ -66,4 +71,29 @@ const lastFmCallback = async (req, res) => {
   }
 };
 
-module.exports = { redirectToLastFm, lastFmCallback };
+// Función para cerrar la sesión
+// Función para cerrar la sesión
+// Función para cerrar la sesión
+const logout = (req, res) => {
+  console.log('Solicitud de cierre de sesión recibida'); // Mensaje al inicio de la función
+
+  if (req.session) {
+    req.session.destroy(err => {
+      if (err) {
+        console.error('Error al cerrar la sesión:', err); // Imprimir error si ocurre
+        return res.status(500).send('Error al cerrar la sesión');
+      } else {
+        res.clearCookie('connect.sid'); // Limpia la cookie de sesión
+        console.log('Sesión cerrada correctamente'); // Mensaje de éxito
+        return res.status(200).send('Sesión cerrada correctamente');
+      }
+    });
+  } else {
+    console.log('No había sesión activa'); // Mensaje si no hay sesión
+    res.status(200).send('No había sesión activa');
+  }
+};
+
+
+
+module.exports = { redirectToLastFm, lastFmCallback, logout };
