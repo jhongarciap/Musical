@@ -23,7 +23,7 @@ function Footer() {
         <p style={{ margin: '0', fontFamily: "'Roboto Condensed', sans-serif" }}>
           Jhon Alejandro García Pareja
           <br />
-          David Felipe Tovar Zurita
+          David Tovar Zurita
         </p>
       </div>
 
