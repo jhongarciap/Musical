@@ -16,6 +16,7 @@ function Header() {
       console.error('Error en la solicitud de cierre de sesión:', error);
     }
   };
+  
 
   return (
     <header
@@ -29,6 +30,7 @@ function Header() {
         position: 'fixed',
         top: '0',
         zIndex: '1000',
+        boxSizing: 'border-box',
         padding: '0 1.5rem',
       }}
     >
@@ -57,11 +59,14 @@ function Header() {
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
+          gap: '0.5rem',
           transition: 'color 0.3s ease',
+          fontFamily: "'Roboto Condensed', sans-serif",
+          marginLeft: 'auto',
         }}
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
-        onClick={handleLogout}  // Cambiado para usar la API correcta
+        onClick={handleLogout}  // Cambiado para usar handleLogout
       >
         Salir
       </button>
