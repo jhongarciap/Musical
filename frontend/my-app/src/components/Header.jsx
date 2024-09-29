@@ -5,7 +5,7 @@ function Header() {
 
   const handleLogin = () => {
     // Redirige al backend para iniciar la autenticación con Last.fm
-    window.location.href = 'https://musical-umh8.onrender.com/api/auth/lastfm'; // Actualiza la URL aquí
+    window.location.href = 'http://localhost:3001/api/auth/lastfm';
   };
   
   return (
@@ -68,7 +68,7 @@ function Header() {
             objectFit: "contain",
             filter: isHovered
               ? "invert(48%) sepia(94%) saturate(1822%) hue-rotate(148deg) brightness(95%) contrast(90%)" // Color cuando se pasa el cursor (hover)
-              : "invert(67%) sepia(93%) saturate(591%) hue-rotate(5deg) brightness(99%) contrast(92%)", // Color inicial
+              : "invert(67%) sepia(93%) saturate(591%) hue-rotate(5deg) brightness(99%) contrast(92%)", // Color inicial (#E8B94D)
             transition: "filter 0.3s ease",
           }}
         />
