@@ -10,7 +10,7 @@ function ProfileImage() {
     // Hacer una solicitud al backend para obtener la información del perfil
     const fetchUserData = async () => {
       try {
-        const response = await axios.get('http://localhost:3001/api/auth/profile', { withCredentials: true });
+        const response = await axios.get('https://musical-umh8.onrender.com/api/auth/profile', { withCredentials: true }); // Cambia la URL aquí
         setUserData(response.data); // Guardar los datos del usuario en el estado
       } catch (err) {
         setError('Error al cargar los datos del usuario');

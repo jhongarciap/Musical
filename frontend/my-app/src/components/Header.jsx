@@ -5,7 +5,7 @@ function Header() {
 
   const handleLogin = () => {
     // Redirige al backend para iniciar la autenticación con Last.fm
-    window.location.href = 'http://localhost:3001/api/auth/lastfm';
+    window.location.href = 'https://musical-umh8.onrender.com/api/auth/lastfm'; // Cambia la URL aquí
   };
   
   return (
@@ -24,7 +24,6 @@ function Header() {
         padding: '0 1.5rem',
       }}
     >
-      {/* Envolviendo la imagen en un enlace para redirigir */}
       <a href="/" style={{ textDecoration: 'none', position: 'absolute', left: '50%', transform: 'translateX(-50%)' }}>
         <img
           loading="lazy"
@@ -37,13 +36,12 @@ function Header() {
         />
       </a>
 
-      {/* Botón de iniciar sesión con Last.fm */}
       <button
         style={{
           height: '40px',
           padding: '0 1rem',
           borderRadius: '1rem',
-          backgroundColor: isHovered ? '#E8B94D' : '#D3D3D3', // Cambia el fondo al pasar el cursor
+          backgroundColor: isHovered ? '#E8B94D' : '#D3D3D3',
           cursor: 'pointer',
           border: 'none',
           marginLeft: 'auto',
@@ -52,23 +50,22 @@ function Header() {
           justifyContent: 'center',
           gap: '0.5rem',
           transition: 'background-color 0.3s ease',
-          fontFamily: "'Roboto Condensed', sans-serif", // Añadir la fuente aquí
+          fontFamily: "'Roboto Condensed', sans-serif",
         }}
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
         onClick={handleLogin}  // Redirigir al backend al hacer clic
       >
         Ingresa con Last.fm
-        {/* Imagen SVG a la derecha del texto */}
         <img
-          src="/Images/last-fm.svg" // Ruta de la imagen SVG
+          src="/Images/last-fm.svg"
           alt="Last.fm logo"
           style={{
             height: "20px",
             objectFit: "contain",
             filter: isHovered
-              ? "invert(48%) sepia(94%) saturate(1822%) hue-rotate(148deg) brightness(95%) contrast(90%)" // Color cuando se pasa el cursor (hover)
-              : "invert(67%) sepia(93%) saturate(591%) hue-rotate(5deg) brightness(99%) contrast(92%)", // Color inicial (#E8B94D)
+              ? "invert(48%) sepia(94%) saturate(1822%) hue-rotate(148deg) brightness(95%) contrast(90%)"
+              : "invert(67%) sepia(93%) saturate(591%) hue-rotate(5deg) brightness(99%) contrast(92%)",
             transition: "filter 0.3s ease",
           }}
         />

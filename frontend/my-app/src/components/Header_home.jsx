@@ -6,7 +6,7 @@ function Header() {
 
   const handleLogout = async () => {
     try {
-      const response = await axios.post('http://localhost:3001/api/auth/logout');
+      const response = await axios.post('https://musical-umh8.onrender.com/api/auth/logout'); // Cambia la URL aquí
       if (response.status === 200) {
         // Redirige a la página principal después de cerrar sesión
         window.location.href = 'http://localhost:3000/'; // Asegúrate que esta URL sea la correcta
@@ -18,8 +18,6 @@ function Header() {
     }
   };
   
-  
-
   return (
     <header
       style={{
