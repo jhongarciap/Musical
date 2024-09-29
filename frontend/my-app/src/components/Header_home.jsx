@@ -6,10 +6,9 @@ function Header() {
 
   const handleLogout = async () => {
     try {
-      const response = await axios.post('http://localhost:3001/api/auth/logout');
+      const response = await axios.post('https://musical-umh8.onrender.com/api/auth/logout', { withCredentials: true });
       if (response.status === 200) {
-        // Redirige a la página principal después de cerrar sesión
-        window.location.href = 'http://localhost:3000/'; // Asegúrate que esta URL sea la correcta
+        window.location.href = '/'; // Redirige a la página principal
       } else {
         console.error('Error al cerrar la sesión');
       }
@@ -17,8 +16,6 @@ function Header() {
       console.error('Error en la solicitud de cierre de sesión:', error);
     }
   };
-  
-  
 
   return (
     <header
@@ -32,7 +29,6 @@ function Header() {
         position: 'fixed',
         top: '0',
         zIndex: '1000',
-        boxSizing: 'border-box',
         padding: '0 1.5rem',
       }}
     >
@@ -61,14 +57,11 @@ function Header() {
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          gap: '0.5rem',
           transition: 'color 0.3s ease',
-          fontFamily: "'Roboto Condensed', sans-serif",
-          marginLeft: 'auto',
         }}
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
-        onClick={handleLogout}  // Cambiado para usar handleLogout
+        onClick={handleLogout}  // Cambiado para usar la API correcta
       >
         Salir
       </button>

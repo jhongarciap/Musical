@@ -3,34 +3,32 @@ import axios from 'axios';
 
 function ProfileImage() {
   const [userData, setUserData] = useState(null);
-  const [loading, setLoading] = useState(true); // Estado para saber si los datos están cargando
-  const [error, setError] = useState(null); // Estado para manejar errores
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
-    // Hacer una solicitud al backend para obtener la información del perfil
     const fetchUserData = async () => {
       try {
-        const response = await axios.get('http://localhost:3001/api/auth/profile', { withCredentials: true });
-        setUserData(response.data); // Guardar los datos del usuario en el estado
+        const response = await axios.get('https://musical-umh8.onrender.com/api/auth/profile', { withCredentials: true });
+        setUserData(response.data);
       } catch (err) {
         setError('Error al cargar los datos del usuario');
       } finally {
-        setLoading(false); // Cambiar el estado de carga
+        setLoading(false);
       }
     };
 
     fetchUserData();
-  }, []); // El arreglo vacío asegura que esto solo ocurra al montar el componente
+  }, []);
 
   if (loading) {
-    return <div>Cargando...</div>; // Mostrar un mensaje de carga
+    return <div>Cargando...</div>;
   }
 
   if (error) {
-    return <div>{error}</div>; // Mostrar mensaje de error si algo falla
+    return <div>{error}</div>;
   }
 
-  // Renderizar el perfil del usuario si los datos han sido cargados
   return (
     <div style={{ position: 'relative', width: '100%', height: '300px', backgroundColor: 'white' }}>
       {/* Imagen de fondo */}
@@ -60,7 +58,7 @@ function ProfileImage() {
         }}
       >
         <img
-          src={userData.profile_image} // Usar la imagen de perfil del usuario
+          src={userData.profile_image}
           alt="Profile"
           style={{
             width: '100%',
@@ -70,14 +68,13 @@ function ProfileImage() {
         />
       </div>
 
-      {/* Nombre de usuario y estado Pro */}
       <div style={{ textAlign: 'center', marginTop: '100px' }}>
         <h1 style={{
           fontFamily: "'Roboto Condensed', sans-serif",
           fontSize: '2rem',
           color: 'black'
         }}>
-          @{userData.username} {/* Mostrar el nombre del usuario */}
+          @{userData.username}
         </h1>
         {userData.is_pro && (
           <h2 style={{
@@ -85,7 +82,7 @@ function ProfileImage() {
             fontSize: '1.2rem',
             color: '#E8B94D'
           }}>
-            Usuario Pro {/* Mostrar si el usuario es Pro */}
+            Usuario Pro
           </h2>
         )}
       </div>
