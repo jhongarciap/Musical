@@ -64,7 +64,8 @@ const lastFmCallback = async (req, res) => {
       if(err){
         console.error('Error guardando la sesión:', err);
       }
-      res.redirect('https://main.d3swbnx2em39af.amplifyapp.com/dashboard?username={session.name}');
+      console.log('Sesión antes de redirigir:', req.session);
+      res.redirect(`https://main.d3swbnx2em39af.amplifyapp.com/dashboard?username={session.name}`);
     });
   } catch (error) {
     console.error('Error durante la autenticación:', error);
