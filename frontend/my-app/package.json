@@ -1,6 +1,5 @@
 {
   "name": "my-app",
-  "homepage": "https://jhongarciap.github.io/Musical",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
@@ -17,8 +16,6 @@
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "deploy": "gh-pages -d build",
-    "predeploy": "npm run build"
   },
   "eslintConfig": {
     "extends": [
@@ -39,8 +36,6 @@
     ]
   },
   "devDependencies": {
-    "gh": "^2.8.9",
-    "gh-pages": "^6.1.1",
-    "pages": "^0.0.16"
+    
   }
 }
