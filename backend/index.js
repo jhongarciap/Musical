@@ -1,15 +1,13 @@
 require('dotenv').config();
 const express = require('express');
-const session = require('express-session');
-const SequelizeStore = require('connect-session-sequelize')(session.Store);
-const sequelize = require('./config/db'); // Tu conexión a MySQL
+const session = require('express-session'); 
+const sequelize = require('./config/db');
 const User = require('./models/userModel');  
 const authRoutes = require('./routes/authRoutes');  
-const cors = require('cors');
 
 const app = express();
 
-// CORS setup
+const cors = require('cors');
 app.use(cors({
   origin: 'https://main.d3gn7cununfdbc.amplifyapp.com', // Cambia esto si es necesario
   credentials: true, // Permite enviar cookies
@@ -18,36 +16,21 @@ app.use(cors({
 // Middleware para procesar JSON
 app.use(express.json());
 
-// Configuración de express-session con SequelizeStore
-const sessionStore = new SequelizeStore({
-  db: sequelize, // Conexión a la base de datos
-});
-
+// Configuración de express-session
 app.use(session({
   secret: 'dftz09122003', // Cambia esto por un valor seguro
-  store: sessionStore,
-  resave: false, // Evita guardar la sesión si no ha sido modificada
-  saveUninitialized: false, // No guarda sesiones vacías
-  cookie: {
-    secure: true, // Solo en HTTPS
-    httpOnly: true,
-    sameSite: 'none',
-  }
+  cookie: {secure: true}
 }));
 
-// Sincronizar la base de datos para la tabla de sesiones
-sessionStore.sync();
-
 // Usa las rutas de autenticación
-app.use('/api/auth', authRoutes);
+app.use('/api/auth', authRoutes);  
 
-// Sincronizar los modelos
+// Sincroniza el modelo con la base de datos
 sequelize.sync()
   .then(() => console.log('La base de datos y las tablas han sido sincronizadas'))
   .catch(err => console.error('Error al sincronizar la base de datos:', err));
 
-// Iniciar el servidor
-const PORT = process.env.PORT;
-app.listen(PORT, () => {
-  console.log(`Servidor corriendo en el puerto ${PORT}`);
-});
+  const PORT = process.env.PORT
+  app.listen(PORT, () => {
+    console.log(`Servidor corriendo en el puerto ${PORT}`);
+  });
