@@ -29,7 +29,7 @@ app.use(session({
     secure: true, 
     sameSite: 'none', // Permite compartir cookies entre dominios
     httpOnly: true,
-    maxAge: 60000, 
+    maxAge: 360000, 
   },
 }));
 
