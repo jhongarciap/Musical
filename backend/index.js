@@ -41,6 +41,6 @@ sequelize.sync()
   .then(() => console.log('La base de datos y las tablas han sido sincronizadas'))
   .catch(err => console.error('Error al sincronizar la base de datos:', err));
 
-app.listen(5000, () => {
+app.listen(() => {
   console.log(`Servidor corriendo`);
 });
