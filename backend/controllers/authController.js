@@ -4,24 +4,28 @@ const User = require('../models/userModel');
 
 // Redirige a Last.fm para autenticación
 const redirectToLastFm = (req, res) => {
-  const authUrl = `https://www.last.fm/api/auth/?api_key=c8c448175ee92bd1dac3f498aae48741&cb=https://backmusical.onrender.com/api/auth/callback`;
+  const apiKey = 'c8c448175ee92bd1dac3f498aae48741';
+  const callbackUrl = 'https://backmusical.onrender.com/api/auth/callback';
+  const authUrl = `https://www.last.fm/api/auth/?api_key=${apiKey}&cb=${callbackUrl}`;
+  console.log('Redirecting to:', authUrl);
   res.redirect(authUrl);
 };
 
 // Callback después de autenticarse
 const lastFmCallback = async (req, res) => {
   const token = req.query.token;
+  const apiKey = 'c8c448175ee92bd1dac3f498aae48741'
   const apiSecret = '4320daff6a0243097f01c7c13d5fa1fa';
 
   const apiSig = generateSignature({
-    api_key: 'c8c448175ee92bd1dac3f498aae48741',
+    api_key: apiKey,
     method: 'auth.getSession',
     token: token,
   }, apiSecret);
 
   try {
     const response = await axios.get(
-      `https://ws.audioscrobbler.com/2.0/?method=auth.getSession&api_key=c8c448175ee92bd1dac3f498aae48741&token=${token}&api_sig=${apiSig}&format=json`
+      `https://ws.audioscrobbler.com/2.0/?method=auth.getSession&api_key=${apiKey}&token=${token}&api_sig=${apiSig}&format=json`
     );
 
     const session = response.data.session;
@@ -29,9 +33,12 @@ const lastFmCallback = async (req, res) => {
     if (!session || !session.name || !session.key) {
       return res.status(400).json({ error: 'Sesión inválida' });
     }
+
+    req.session.username = session.name;
+    console.log('Sesión guardada con username:', req.session.username);
     // Obtener detalles del perfil del usuario
     const profileResponse = await axios.get(
-      `https://ws.audioscrobbler.com/2.0/?method=user.getinfo&user=${session.name}&api_key=c8c448175ee92bd1dac3f498aae48741&format=json`
+      `https://ws.audioscrobbler.com/2.0/?method=user.getinfo&user=${session.name}&api_key=${apiKey}&format=json`
     );
 
     const userInfo = profileResponse.data.user;
@@ -58,15 +65,8 @@ const lastFmCallback = async (req, res) => {
       user.is_pro = isPro;
       await user.save();  // Guardar los cambios
     }
-    req.session.username = session.name;
-    console.log(req.session.username)
-    req.session.save((err)=> {
-      if(err){
-        console.error('Error guardando la sesión:', err);
-      }
-      console.log('Sesión antes de redirigir:', req.session);
-      res.redirect(`https://main.d3swbnx2em39af.amplifyapp.com/dashboard?username={session.name}`);
-    });
+
+    res.redirect(`https://main.d3swbnx2em39af.amplifyapp.com/dashboard`)
   } catch (error) {
     console.error('Error durante la autenticación:', error);
     res.status(500).send('Error durante la autenticación');

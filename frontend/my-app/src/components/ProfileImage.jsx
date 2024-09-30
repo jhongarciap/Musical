@@ -11,6 +11,7 @@ function ProfileImage() {
     const fetchUserData = async () => {
       try {
         const response = await axios.get('https://backmusical.onrender.com/api/auth/profile', { withCredentials: true });
+        console.log(response.data);
         setUserData(response.data); // Guardar los datos del usuario en el estado
       } catch (err) {
         setError('Error al cargar los datos del usuario');

@@ -1,7 +1,6 @@
 require('dotenv').config();
 const express = require('express');
 const session = require('express-session'); 
-const cookieParser = require('cookie-parser'); // Importa cookie-parser
 const sequelize = require('./config/db');
 const User = require('./models/userModel');  
 const authRoutes = require('./routes/authRoutes');  
@@ -14,23 +13,13 @@ app.use(cors({
   credentials: true, // Permite enviar cookies
 }));
 
-// Usa cookie-parser para manejar cookies
-app.use(cookieParser());
-
 // Middleware para procesar JSON
 app.use(express.json());
 
 // Configuración de express-session
 app.use(session({
   secret: 'dftz09122003', // Cambia esto por un valor seguro
-  resave: false,
-  saveUninitialized: true,
-  cookie: { 
-    secure: true, 
-    sameSite: 'none', // Permite compartir cookies entre dominios
-    httpOnly: true,
-    maxAge: 360000, 
-  },
+  cookie: {secure: true}
 }));
 
 // Usa las rutas de autenticación
@@ -41,7 +30,7 @@ sequelize.sync()
   .then(() => console.log('La base de datos y las tablas han sido sincronizadas'))
   .catch(err => console.error('Error al sincronizar la base de datos:', err));
 
-  
+  const PORT = process.env.PORT
   app.listen(PORT, () => {
     console.log(`Servidor corriendo en el puerto ${PORT}`);
   });
