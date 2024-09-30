@@ -7,9 +7,10 @@ function Header() {
   const handleLogout = async () => {
     try {
       const response = await axios.post('https://backmusical.onrender.com/api/auth/logout');
+      console.log(response);
       if (response.status === 200) {
         // Redirige a la página principal después de cerrar sesión
-        window.location.href = 'https://main.d3swbnx2em39af.amplifyapp.com'; // Asegúrate que esta URL sea la correcta
+        window.location.replace('https://main.d3swbnx2em39af.amplifyapp.com'); // Asegúrate que esta URL sea la correcta
       } else {
         console.error('Error al cerrar la sesión');
       }
