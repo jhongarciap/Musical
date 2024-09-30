@@ -1,7 +1,7 @@
-// index.js
 require('dotenv').config();
 const express = require('express');
-const session = require('express-session'); // Importa express-session
+const session = require('express-session'); 
+const cookieParser = require('cookie-parser'); // Importa cookie-parser
 const sequelize = require('./config/db');
 const User = require('./models/userModel');  
 const authRoutes = require('./routes/authRoutes');  
@@ -14,6 +14,9 @@ app.use(cors({
   credentials: true, // Permite enviar cookies
 }));
 
+// Usa cookie-parser para manejar cookies
+app.use(cookieParser());
+
 // Middleware para procesar JSON
 app.use(express.json());
 
@@ -22,9 +25,11 @@ app.use(session({
   secret: 'dftz09122003', // Cambia esto por un valor seguro
   resave: false,
   saveUninitialized: true,
-  cookie: { secure: process.env.NODE_ENV === 'production', 
-  sameSite:'none',
-  httpOnly: true }
+  cookie: { 
+    secure: process.env.NODE_ENV === 'production', 
+    sameSite: 'none', // Permite compartir cookies entre dominios
+    httpOnly: true 
+  }
 }));
 
 // Usa las rutas de autenticación
