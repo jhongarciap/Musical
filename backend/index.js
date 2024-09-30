@@ -41,6 +41,7 @@ sequelize.sync()
   .then(() => console.log('La base de datos y las tablas han sido sincronizadas'))
   .catch(err => console.error('Error al sincronizar la base de datos:', err));
 
-app.listen(() => {
-  console.log(`Servidor corriendo`);
-});
+  const PORT = process.env.PORT; // Usa el puerto proporcionado por Render
+  app.listen(PORT, () => {
+    console.log(`Servidor corriendo en el puerto ${PORT}`);
+  });
