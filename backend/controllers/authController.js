@@ -4,26 +4,24 @@ const User = require('../models/userModel');
 
 // Redirige a Last.fm para autenticación
 const redirectToLastFm = (req, res) => {
-  const apiKey = process.env.LASTFM_API_KEY;
-  const authUrl = `https://www.last.fm/api/auth/?api_key=${apiKey}&cb=https://backmusical.onrender.com/api/auth/callback`;
+  const authUrl = `https://www.last.fm/api/auth/?api_key=c8c448175ee92bd1dac3f498aae48741&cb=https://backmusical.onrender.com/api/auth/callback`;
   res.redirect(authUrl);
 };
 
 // Callback después de autenticarse
 const lastFmCallback = async (req, res) => {
   const token = req.query.token;
-  const apiKey = process.env.LASTFM_API_KEY;
-  const apiSecret = process.env.LASTFM_API_SECRET;
+  const apiSecret = '4320daff6a0243097f01c7c13d5fa1fa';
 
   const apiSig = generateSignature({
-    api_key: apiKey,
+    api_key: 'c8c448175ee92bd1dac3f498aae48741',
     method: 'auth.getSession',
     token: token,
   }, apiSecret);
 
   try {
     const response = await axios.get(
-      `https://ws.audioscrobbler.com/2.0/?method=auth.getSession&api_key=${apiKey}&token=${token}&api_sig=${apiSig}&format=json`
+      `https://ws.audioscrobbler.com/2.0/?method=auth.getSession&api_key=c8c448175ee92bd1dac3f498aae48741&token=${token}&api_sig=${apiSig}&format=json`
     );
 
     const session = response.data.session;
@@ -35,7 +33,7 @@ const lastFmCallback = async (req, res) => {
     req.session.username = session.name;
     // Obtener detalles del perfil del usuario
     const profileResponse = await axios.get(
-      `https://ws.audioscrobbler.com/2.0/?method=user.getinfo&user=${session.name}&api_key=${apiKey}&format=json`
+      `https://ws.audioscrobbler.com/2.0/?method=user.getinfo&user=${session.name}&api_key=c8c448175ee92bd1dac3f498aae48741&format=json`
     );
 
     const userInfo = profileResponse.data.user;
