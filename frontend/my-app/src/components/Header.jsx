@@ -5,7 +5,7 @@ function Header() {
 
   const handleLogin = () => {
     // Redirige al backend para iniciar la autenticación con Last.fm
-    window.location.href = 'http://localhost:3001/api/auth/lastfm';
+    window.location.href = 'https://backmusical.vercel.app/api/auth/lastfm';
   };
   
   return (
