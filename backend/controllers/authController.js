@@ -31,6 +31,7 @@ const lastFmCallback = async (req, res) => {
     }
 
     req.session.username = session.name;
+    console.log(req.session.username);
     // Obtener detalles del perfil del usuario
     const profileResponse = await axios.get(
       `https://ws.audioscrobbler.com/2.0/?method=user.getinfo&user=${session.name}&api_key=c8c448175ee92bd1dac3f498aae48741&format=json`

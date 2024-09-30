@@ -14,7 +14,8 @@ router.get('/profile', async (req, res) => {
     try {
       if (req.session && req.session.username) {
         const user = await User.findOne({ where: { username: req.session.username } });
-        if (user) {
+        console.log('Usuario encontrado en base de datos:', user);
+        if (user && user.username) {
           return res.status(200).json({
             username: user.username,
             profile_image: user.profile_image,
