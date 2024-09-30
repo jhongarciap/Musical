@@ -5,7 +5,7 @@ const User = require('../models/userModel');
 // Redirige a Last.fm para autenticación
 const redirectToLastFm = (req, res) => {
   const apiKey = 'c8c448175ee92bd1dac3f498aae48741';
-  const callbackUrl = 'https://backmusical.onrender.com/api/auth/callback';
+  const callbackUrl = 'http://localhost:3001/api/auth/callback';
   const authUrl = `https://www.last.fm/api/auth/?api_key=${apiKey}&cb=${callbackUrl}`;
   console.log('Redirecting to:', authUrl);
   res.redirect(authUrl);

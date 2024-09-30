@@ -5,7 +5,7 @@ function Header() {
 
   const handleLogin = () => {
     // Redirige al backend para iniciar la autenticación con Last.fm
-    window.location.href = 'https://backmusical.onrender.com/api/auth/lastfm';
+    window.location.href = 'http://localhost:3001/api/auth/lastfm';
   };
   
   return (
