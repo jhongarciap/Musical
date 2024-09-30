@@ -42,7 +42,7 @@ sequelize.sync()
   .catch(err => console.error('Error al sincronizar la base de datos:', err));
 
 // Puerto del servidor
-const PORT = process.env.PORT || 3002;
-app.listen(PORT, () => {
-  console.log(`Servidor corriendo en el puerto ${PORT}`);
-});
+// const PORT = process.env.PORT || 3002;
+// app.listen(PORT, () => {
+//   console.log(`Servidor corriendo en el puerto ${PORT}`);
+// });
