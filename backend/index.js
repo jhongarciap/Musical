@@ -9,7 +9,7 @@ const app = express();
 
 const cors = require('cors');
 app.use(cors({
-  origin: 'https://main.d3swbnx2em39af.amplifyapp.com', // Cambia esto si es necesario
+  origin: 'https://main.d3gn7cununfdbc.amplifyapp.com', // Cambia esto si es necesario
   credentials: true, // Permite enviar cookies
 }));
 

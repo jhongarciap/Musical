@@ -66,7 +66,7 @@ const lastFmCallback = async (req, res) => {
       await user.save();  // Guardar los cambios
     }
 
-    res.redirect(`https://main.d3swbnx2em39af.amplifyapp.com/dashboard`)
+    res.redirect(`https://main.d3gn7cununfdbc.amplifyapp.com/dashboard`)
   } catch (error) {
     console.error('Error durante la autenticación:', error);
     res.status(500).send('Error durante la autenticación');
