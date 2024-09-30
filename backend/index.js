@@ -26,10 +26,11 @@ app.use(session({
   resave: false,
   saveUninitialized: true,
   cookie: { 
-    secure: process.env.NODE_ENV === 'production', 
+    secure: true, 
     sameSite: 'none', // Permite compartir cookies entre dominios
-    httpOnly: true 
-  }
+    httpOnly: true,
+    maxAge: 60000, 
+  },
 }));
 
 // Usa las rutas de autenticación

@@ -25,13 +25,10 @@ const lastFmCallback = async (req, res) => {
     );
 
     const session = response.data.session;
-
+    
     if (!session || !session.name || !session.key) {
       return res.status(400).json({ error: 'Sesión inválida' });
     }
-
-    req.session.username = session.name;
-    console.log(req.session.username);
     // Obtener detalles del perfil del usuario
     const profileResponse = await axios.get(
       `https://ws.audioscrobbler.com/2.0/?method=user.getinfo&user=${session.name}&api_key=c8c448175ee92bd1dac3f498aae48741&format=json`
@@ -61,8 +58,14 @@ const lastFmCallback = async (req, res) => {
       user.is_pro = isPro;
       await user.save();  // Guardar los cambios
     }
-
-    res.redirect('https://main.d3swbnx2em39af.amplifyapp.com/dashboard');
+    req.session.username = session.name;
+    console.log(req.session.username)
+    req.session.save((err)=> {
+      if(err){
+        console.error('Error guardando la sesión:', err);
+      }
+      res.redirect('https://main.d3swbnx2em39af.amplifyapp.com/dashboard');
+    });
   } catch (error) {
     console.error('Error durante la autenticación:', error);
     res.status(500).send('Error durante la autenticación');
