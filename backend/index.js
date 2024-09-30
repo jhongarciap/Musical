@@ -21,8 +21,10 @@ app.use(express.json());
 app.use(session({
   secret: 'dftz09122003', // Cambia esto por un valor seguro
   resave: false,
-  saveUninitialized: false,
-  cookie: { secure: true, sameSite:'none' } // Cambia a true si usas HTTPS
+  saveUninitialized: true,
+  cookie: { secure: process.env.NODE_ENV === 'production', 
+  sameSite:'none',
+  httpOnly: true }
 }));
 
 // Usa las rutas de autenticación

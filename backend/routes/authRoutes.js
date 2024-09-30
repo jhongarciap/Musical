@@ -12,6 +12,7 @@ router.get('/callback', lastFmCallback);
 // Ruta para obtener la información del usuario desde la sesión
 router.get('/profile', async (req, res) => {
     try {
+      console.log('Sesión actual:', req.session);
       if (req.session && req.session.username) {
         const user = await User.findOne({ where: { username: req.session.username } });
         console.log('Usuario encontrado en base de datos:', user);
