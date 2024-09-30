@@ -10,7 +10,7 @@ const app = express();
 
 const cors = require('cors');
 app.use(cors({
-  origin: 'http://localhost:3000', // Cambia esto si es necesario
+  origin: 'https://main.d3swbnx2em39af.amplifyapp.com/', // Cambia esto si es necesario
   credentials: true, // Permite enviar cookies
 }));
 
@@ -22,7 +22,7 @@ app.use(session({
   secret: 'dftz09122003', // Cambia esto por un valor seguro
   resave: false,
   saveUninitialized: true,
-  cookie: { secure: false } // Cambia a true si usas HTTPS
+  cookie: { secure: true } // Cambia a true si usas HTTPS
 }));
 
 // Usa las rutas de autenticación

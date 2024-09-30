@@ -64,15 +64,13 @@ const lastFmCallback = async (req, res) => {
       await user.save();  // Guardar los cambios
     }
 
-    res.redirect('http://localhost:3000/dashboard');
+    res.redirect('https://main.d3swbnx2em39af.amplifyapp.com/dashboard');
   } catch (error) {
     console.error('Error durante la autenticación:', error);
     res.status(500).send('Error durante la autenticación');
   }
 };
 
-// Función para cerrar la sesión
-// Función para cerrar la sesión
 // Función para cerrar la sesión
 const logout = (req, res) => {
   console.log('Solicitud de cierre de sesión recibida'); // Mensaje al inicio de la función
