@@ -3,7 +3,7 @@ const User = require('../models/userModel');
 const crypto = require('crypto');
 
 // Redirige a Last.fm para autenticación
-const redirectToLastFm = (res) => {
+const redirectToLastFm = (req, res) => {
   const apiKey = 'c8c448175ee92bd1dac3f498aae48741';
   const authUrl = `https://www.last.fm/api/auth/?api_key=${apiKey}`;
   console.log('Redirecting to:', authUrl);
