@@ -1,77 +1,65 @@
 const axios = require('axios');
-const { generateSignature } = require('../utils/generateSignature');
 const User = require('../models/userModel');
+const crypto = require('crypto');
 
 // Redirige a Last.fm para autenticación
-const redirectToLastFm = (req, res) => {
+const redirectToLastFm = (res) => {
   const apiKey = 'c8c448175ee92bd1dac3f498aae48741';
-  const callbackUrl = 'https://backmusical.onrender.com/api/auth/callback';
-  const authUrl = `https://www.last.fm/api/auth/?api_key=${apiKey}&cb=${callbackUrl}`;
+  const authUrl = `https://www.last.fm/api/auth/?api_key=${apiKey}`;
   console.log('Redirecting to:', authUrl);
   res.redirect(authUrl);
 };
-
-// Callback después de autenticarse
 const lastFmCallback = async (req, res) => {
+  const apiKey = 'c8c448175ee92bd1dac3f498aae48741';
+  const apiSecret = '4320daff6a0243097f01c7c13d5fa1fa'; // Reemplaza con tu clave secreta de Last.fm
   const token = req.query.token;
-  const apiKey = 'c8c448175ee92bd1dac3f498aae48741'
-  const apiSecret = '4320daff6a0243097f01c7c13d5fa1fa';
 
-  const apiSig = generateSignature({
-    api_key: apiKey,
-    method: 'auth.getSession',
-    token: token,
-  }, apiSecret);
+  if (!token) {
+    return res.status(400).send('Token not found');
+  }
+
+  // Crear la firma API (api_sig)
+  const apiSig = crypto
+    .createHash('md5')
+    .update(`api_key${apiKey}methodauth.getSessiontoken${token}${apiSecret}`)
+    .digest('hex');
+
+  // Hacer la solicitud para obtener la sesión
+  const getSessionUrl = `https://ws.audioscrobbler.com/2.0/?method=auth.getSession&api_key=${apiKey}&token=${token}&api_sig=${apiSig}&format=json`;
 
   try {
-    const response = await axios.get(
-      `https://ws.audioscrobbler.com/2.0/?method=auth.getSession&api_key=${apiKey}&token=${token}&api_sig=${apiSig}&format=json`
-    );
-
+    const response = await axios.get(getSessionUrl);
     const session = response.data.session;
-    
-    if (!session || !session.name || !session.key) {
-      return res.status(400).json({ error: 'Sesión inválida' });
-    }
 
-    req.session.username = session.name;
-    console.log('Sesión guardada con username:', req.session.username);
-    // Obtener detalles del perfil del usuario
-    const profileResponse = await axios.get(
-      `https://ws.audioscrobbler.com/2.0/?method=user.getinfo&user=${session.name}&api_key=${apiKey}&format=json`
-    );
+    // Buscar si el usuario ya existe en la base de datos
+    let user = await User.findOne({ where: { username: session.name } });
 
-    const userInfo = profileResponse.data.user;
-    const profileImage = userInfo.image.find(img => img.size === 'large')['#text']; // La imagen de perfil
-    const isPro = userInfo.subscriber === '1';  // Comprobar si es usuario Pro
-
-    // Almacenar en la base de datos
-    const [user, created] = await User.findOrCreate({
-      where: { username: session.name },
-      defaults: {
+    if (user) {
+      // Si el usuario ya existe, actualiza su session_key
+      user.session_key = session.key;
+      await user.save();
+    } else {
+      // Si el usuario no existe, crea un nuevo registro
+      user = await User.create({
+        username: session.name,
         session_key: session.key,
-        profile_image: profileImage,  // Almacenar la foto de perfil
-        is_pro: isPro,  // Almacenar el estado de suscripción
-      }
-    });
-
-    if (!user) {
-      return res.status(500).json({ error: 'No se pudo crear o encontrar el usuario' });
+        profile_image: '', // Puedes obtener la imagen más tarde y actualizarla
+        is_pro: false, // Puedes actualizar este campo dependiendo de si es pro o no
+      });
     }
 
-    if (!created) {
-      // Si el usuario ya existe, actualiza la imagen de perfil y el estado Pro
-      user.profile_image = profileImage;
-      user.is_pro = isPro;
-      await user.save();  // Guardar los cambios
-    }
+    // Guarda el nombre de usuario en la sesión de Express
+    req.session.username = session.name;
+    req.session.key = session.key;
 
-    res.redirect(`https://main.d3gn7cununfdbc.amplifyapp.com/dashboard`)
+    // Redirige al usuario al dashboard o a donde prefieras
+    res.redirect('/dashboard');
   } catch (error) {
-    console.error('Error durante la autenticación:', error);
-    res.status(500).send('Error durante la autenticación');
+    console.error('Error fetching session:', error);
+    res.status(500).send('Error during authentication');
   }
 };
+
 
 // Función para cerrar la sesión
 const logout = (req, res) => {
