@@ -53,7 +53,7 @@ const lastFmCallback = async (req, res) => {
     req.session.key = session.key;
 
     // Redirige al usuario al dashboard o a donde prefieras
-    res.redirect('/dashboard');
+    res.redirect('https://main.d3gn7cununfdbc.amplifyapp.com/dashboard');
   } catch (error) {
     console.error('Error fetching session:', error);
     res.status(500).send('Error during authentication');
