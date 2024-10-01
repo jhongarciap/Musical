@@ -9,7 +9,7 @@ const app = express();
 
 const cors = require('cors');
 app.use(cors({
-  origin: 'https://main.d3gn7cununfdbc.amplifyapp.com', // Cambia esto si es necesario
+  origin: 'https://salmon-sea-0b585031e.5.azurestaticapps.net', // Cambia esto si es necesario
   credentials: true, // Permite enviar cookies
 }));
 

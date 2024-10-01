@@ -6,11 +6,11 @@ function Header() {
 
   const handleLogout = async () => {
     try {
-      const response = await axios.post('https://backmusical.onrender.com/api/auth/logout');
+      const response = await axios.post('back-musical-a8gubqc0afeaejbc.eastus2-01.azurewebsites.net/api/auth/logout');
       console.log(response);
       if (response.status === 200) {
         // Redirige a la página principal después de cerrar sesión
-        window.location.replace('https://main.d3gn7cununfdbc.amplifyapp.com'); // Asegúrate que esta URL sea la correcta
+        window.location.replace('https://salmon-sea-0b585031e.5.azurestaticapps.net'); // Asegúrate que esta URL sea la correcta
       } else {
         console.error('Error al cerrar la sesión');
       }
