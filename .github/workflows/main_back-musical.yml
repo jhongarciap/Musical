@@ -11,7 +11,7 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
 
     steps:
       - uses: actions/checkout@v4
@@ -26,15 +26,12 @@ jobs:
           npm install
           npm run build --if-present
           npm run test --if-present
-
-      - name: Zip artifact for deployment
-        run: zip release.zip ./* -r
-
+      
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
         with:
           name: node-app
-          path: release.zip
+          path: .
 
   deploy:
     runs-on: ubuntu-latest
@@ -50,20 +47,17 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: node-app
-
-      - name: Unzip artifact for deployment
-        run: unzip release.zip
       
       - name: Login to Azure
         uses: azure/login@v2
         with:
-          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_666E75BDFB9D48E99536DE2F40AA63CE }}
-          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_C84220C6B50541468CED8D0A02F9D442 }}
-          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_41D9B470933545CC9FAFF95537A8B8FA }}
+          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_81E08DA09BCB49ED9106658E40269961 }}
+          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_95B5B7F7033D458FA1A7017388473739 }}
+          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_4885D65E16E14EF4B439112B51164680 }}
 
       - name: 'Deploy to Azure Web App'
-        id: deploy-to-webapp
         uses: azure/webapps-deploy@v3
+        id: deploy-to-webapp
         with:
           app-name: 'back-musical'
           slot-name: 'Production'
