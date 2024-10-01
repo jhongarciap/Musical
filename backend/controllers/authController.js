@@ -3,7 +3,7 @@ const User = require('../models/userModel');
 const crypto = require('crypto');
 
 // Redirige a Last.fm para autenticación
-const redirectToLastFm = (res) => {
+const redirectToLastFm = (req, res) => {
   const apiKey = 'c8c448175ee92bd1dac3f498aae48741';
   const authUrl = `https://www.last.fm/api/auth/?api_key=${apiKey}`;
   console.log('Redirecting to:', authUrl);
@@ -53,7 +53,7 @@ const lastFmCallback = async (req, res) => {
     req.session.key = session.key;
 
     // Redirige al usuario al dashboard o a donde prefieras
-    res.redirect('/dashboard');
+    res.redirect('https://main.d3gn7cununfdbc.amplifyapp.com/dashboard');
   } catch (error) {
     console.error('Error fetching session:', error);
     res.status(500).send('Error during authentication');
