@@ -9,10 +9,12 @@ const redirectToLastFm = (req, res) => {
   console.log('Redirecting to:', authUrl);
   res.redirect(authUrl);
 };
+
+// Callback de Last.fm con método POST para guardar la sesión
 const lastFmCallback = async (req, res) => {
   const apiKey = 'c8c448175ee92bd1dac3f498aae48741';
   const apiSecret = '4320daff6a0243097f01c7c13d5fa1fa'; // Reemplaza con tu clave secreta de Last.fm
-  const token = req.query.token;
+  const token = req.body.token;  // Usamos req.body ya que es POST
 
   if (!token) {
     return res.status(400).send('Token not found');
@@ -60,7 +62,6 @@ const lastFmCallback = async (req, res) => {
   }
 };
 
-
 // Función para cerrar la sesión
 const logout = (req, res) => {
   console.log('Solicitud de cierre de sesión recibida'); // Mensaje al inicio de la función
@@ -81,7 +82,5 @@ const logout = (req, res) => {
     res.status(200).send('No había sesión activa');
   }
 };
-
-
 
 module.exports = { redirectToLastFm, lastFmCallback, logout };
