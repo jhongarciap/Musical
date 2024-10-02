@@ -39,25 +39,21 @@ const lastFmCallback = async (req, res) => {
     const profileImage = userInfo.image.find(img => img.size === 'large')['#text']; // La imagen de perfil
     const isPro = userInfo.subscriber === '1';  // Comprobar si es usuario Pro
 
-    // Busca al usuario por session.key
+    // Busca al usuario por session_key
     let user = await Users.findOne({ where: { session_key: session.key } });
 
-    // Si no existe el usuario, crea uno nuevo, si existe, actualiza
-    if (!user) {
-        user = await Users.create({
-            username: session.name, // Usa el username de la sesión al crear
-            session_key: session.key,
-            profile_image: profileImage || '',
-            is_pro: isPro || false,
-        });
-    } else {
-        // Si el usuario existe, actualiza el username, la session_key y la imagen
-        user.username = session.name; // Actualiza el username
-        user.session_key = session.key; // Actualiza la session_key
-        user.profile_image = profileImage || user.profile_image; // Actualiza la imagen si hay una nueva
-        user.is_pro = isPro; // Actualiza el estado de Pro
-        await user.save();
+    // Si el usuario existe, elimina el registro basado en username
+    if (user) {
+        await Users.destroy({ where: { username: user.username } });
     }
+
+    // Crear un nuevo usuario con la información actual
+    user = await Users.create({
+        username: session.name, // Usa el username de la sesión
+        session_key: session.key,
+        profile_image: profileImage || '',
+        is_pro: isPro || false,
+    });
 
     // Generar el JWT
     const jwtToken = jwt.sign(
@@ -71,6 +67,7 @@ const lastFmCallback = async (req, res) => {
     console.error('Error al obtener la sesión:', error);
     res.status(500).send('Error durante la autenticación');
 }
+
 
 };
 
