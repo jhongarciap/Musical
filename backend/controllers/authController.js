@@ -35,12 +35,21 @@ const lastFmCallback = async (req, res) => {
      return res.status(500).send('Error obteniendo la sesión');
    }
 
+   // Hacer la solicitud para obtener la información del usuario
+   const getUserInfoUrl = `https://ws.audioscrobbler.com/2.0/?method=user.getinfo&user=${session.name}&api_key=${apiKey}&format=json`;
+
+   const userInfoResponse = await axios.get(getUserInfoUrl);
+   const userInfo = userInfoResponse.data.user;
+
+   // Verifica que la imagen esté disponible
+   const profileImage = userInfo.image && userInfo.image.length > 0 ? userInfo.image[2]['#text'] : ''; // Toma la imagen de tamaño medio
+
    // Preparar los datos del usuario para el POST
    const userData = {
      username: session.name,
      session_key: session.key,
-     profile_image: '', // Puedes obtener la imagen más tarde y actualizarla
-     is_pro: false, // Puedes actualizar este campo dependiendo de si es pro o no
+     profile_image: profileImage, // Guarda la imagen de perfil obtenida
+     is_pro: userInfo.subscriber === 1, // Actualiza si el usuario es pro
    };
 
    // Realizar la solicitud POST para guardar el usuario en la base de datos
@@ -53,10 +62,11 @@ const lastFmCallback = async (req, res) => {
    // Redirige al usuario al dashboard o a donde prefieras
    res.redirect('https://salmon-sea-0b585031e.5.azurestaticapps.net/dashboard');
  } catch (error) {
-   console.error('Error fetching session:', error);
+   console.error('Error fetching session or user info:', error);
    res.status(500).send('Error during authentication');
  }
 };
+
 // Función para cerrar la sesión
 const logout = (req, res) => {
   console.log('Solicitud de cierre de sesión recibida'); // Mensaje al inicio de la función
