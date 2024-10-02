@@ -30,40 +30,48 @@ const lastFmCallback = async (req, res) => {
     const response = await axios.get(getSessionUrl);
     const session = response.data.session;
 
-    let user = await Users.findOne({ where: { session_key: session.username } });
-      // Obtener detalles del perfil del usuario
+    // Obtener detalles del perfil del usuario
     const profileResponse = await axios.get(
-    `https://ws.audioscrobbler.com/2.0/?method=user.getinfo&user=${session.name}&api_key=${apiKey}&format=json`
-  );
-  const userInfo = profileResponse.data.user;
-  const profileImage = userInfo.image.find(img => img.size === 'large')['#text']; // La imagen de perfil
-  const isPro = userInfo.subscriber === '1';  // Comprobar si es usuario Pro
-    if (!user) {
-      user = await Users.create({
-        username: session.name,
-        session_key: session.key,
-        profile_image: profileImage || '', // Asegúrate de que esta variable tenga la URL
-        is_pro: isPro || false,
-      });
-    } else {
-      user.session_key = session.key;
-      user.username = session.name;
-      user.profile_image = profileImage || user.profile_image; // Actualiza la imagen si hay una nueva
-      await user.save();
-    }
-    
-    // Generar el JWT
-    const jwtToken = jwt.sign(
-      { username: session.name, key: session.key },
-      process.env.JWT_SECRET,
-      { expiresIn: '1h' } // Tiempo de expiración del token
+        `https://ws.audioscrobbler.com/2.0/?method=user.getinfo&user=${session.name}&api_key=${apiKey}&format=json`
     );
 
-  res.redirect(`https://main.d3swbnx2em39af.amplifyapp.com/callback?token=${jwtToken}`);
-  } catch (error) {
+    const userInfo = profileResponse.data.user;
+    const profileImage = userInfo.image.find(img => img.size === 'large')['#text']; // La imagen de perfil
+    const isPro = userInfo.subscriber === '1';  // Comprobar si es usuario Pro
+
+    // Busca al usuario por session.key
+    let user = await Users.findOne({ where: { session_key: session.key } });
+
+    // Si no existe el usuario, crea uno nuevo, si existe, actualiza
+    if (!user) {
+        user = await Users.create({
+            username: session.name, // Usa el username de la sesión al crear
+            session_key: session.key,
+            profile_image: profileImage || '',
+            is_pro: isPro || false,
+        });
+    } else {
+        // Si el usuario existe, actualiza el username, la session_key y la imagen
+        user.username = session.name; // Actualiza el username
+        user.session_key = session.key; // Actualiza la session_key
+        user.profile_image = profileImage || user.profile_image; // Actualiza la imagen si hay una nueva
+        user.is_pro = isPro; // Actualiza el estado de Pro
+        await user.save();
+    }
+
+    // Generar el JWT
+    const jwtToken = jwt.sign(
+        { username: session.name, key: session.key },
+        process.env.JWT_SECRET,
+        { expiresIn: '1h' } // Tiempo de expiración del token
+    );
+
+    res.redirect(`https://main.d3swbnx2em39af.amplifyapp.com/callback?token=${jwtToken}`);
+} catch (error) {
     console.error('Error al obtener la sesión:', error);
     res.status(500).send('Error durante la autenticación');
-  }
+}
+
 };
 
 // Cerrar sesión (opcional en JWT, ya que no requiere estado en el servidor)
