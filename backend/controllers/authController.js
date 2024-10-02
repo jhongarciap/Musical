@@ -5,16 +5,16 @@ const crypto = require('crypto');
 // Redirige a Last.fm para autenticación
 const redirectToLastFm = (req, res) => {
   const apiKey = 'c8c448175ee92bd1dac3f498aae48741';
-  const authUrl = `https://www.last.fm/api/auth/?api_key=${apiKey}`;
+  const authUrl = `https://www.last.fm/api/auth/?api_key=${apiKey}&cb=http://tu_dominio/lastfm/callback`; // Asegúrate de cambiar 'tu_dominio'
   console.log('Redirecting to:', authUrl);
   res.redirect(authUrl);
 };
 
-// Callback de Last.fm con método POST para guardar la sesión
+// Callback de Last.fm para guardar la sesión y el usuario en la base de datos
 const lastFmCallback = async (req, res) => {
   const apiKey = 'c8c448175ee92bd1dac3f498aae48741';
-  const apiSecret = '4320daff6a0243097f01c7c13d5fa1fa'; // Reemplaza con tu clave secreta de Last.fm
-  const token = req.body.token;  // Usamos req.body ya que es POST
+  const apiSecret = '4320daff6a0243097f01c7c13d5fa1fa'; // Clave secreta de Last.fm
+  const token = req.query.token; // El token debe ser parte de la query string
 
   if (!token) {
     return res.status(400).send('Token not found');
@@ -32,6 +32,10 @@ const lastFmCallback = async (req, res) => {
   try {
     const response = await axios.get(getSessionUrl);
     const session = response.data.session;
+
+    if (!session || !session.name || !session.key) {
+      return res.status(500).send('Error obteniendo la sesión');
+    }
 
     // Buscar si el usuario ya existe en la base de datos
     let user = await User.findOne({ where: { username: session.name } });
@@ -54,7 +58,7 @@ const lastFmCallback = async (req, res) => {
     req.session.username = session.name;
     req.session.key = session.key;
 
-    // Redirige al usuario al dashboard o a donde prefieras
+    // Redirige al usuario al dashboard o a la página que desees
     res.redirect('https://main.d3swbnx2em39af.amplifyapp.com/dashboard');
   } catch (error) {
     console.error('Error fetching session:', error);
@@ -64,21 +68,16 @@ const lastFmCallback = async (req, res) => {
 
 // Función para cerrar la sesión
 const logout = (req, res) => {
-  console.log('Solicitud de cierre de sesión recibida'); // Mensaje al inicio de la función
-
   if (req.session) {
     req.session.destroy(err => {
       if (err) {
-        console.error('Error al cerrar la sesión:', err); // Imprimir error si ocurre
         return res.status(500).send('Error al cerrar la sesión');
       } else {
-        res.clearCookie('connect.sid'); // Limpia la cookie de sesión
-        console.log('Sesión cerrada correctamente'); // Mensaje de éxito
+        res.clearCookie('connect.sid');
         return res.status(200).send('Sesión cerrada correctamente');
       }
     });
   } else {
-    console.log('No había sesión activa'); // Mensaje si no hay sesión
     res.status(200).send('No había sesión activa');
   }
 };
