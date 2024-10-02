@@ -1,47 +1,34 @@
 const express = require('express');
-const { redirectToLastFm, lastFmCallback, logout } = require('../controllers/authController'); // Ajusta la ruta si es necesario
+const { redirectToLastFm, lastFmCallback, logout } = require('../controllers/authController');
 const router = express.Router();
-const Users = require('../models/userModel');
+const authenticateJWT = require('../middleware/authenticateJWT.js');  // Middleware para verificar JWT
 
 // Ruta para redirigir a Last.fm
 router.get('/lastfm', redirectToLastFm);
 
-// Ruta para el callback de Last.fm
+// Ruta para callback
 router.get('/callback', lastFmCallback);
 
-router.get('/profile', async (req, res) => {
+// Ruta protegida para obtener el perfil del usuario
+router.get('/profile', authenticateJWT, async (req, res) => {
   try {
-    // Verificamos si la sesión contiene un usuario válido
-    if (req.session && req.session.username) {
-      console.log('Usuario en la sesión:', req.session.username); // Verifica que exista
-
-      // Consulta a la base de datos
-      const user = await Users.findOne({ where: { username: req.session.username } });
-
-      if (user) {
-        console.log('Usuario encontrado:', user);
-
-        // Devuelve los datos del usuario encontrados
-        return res.status(200).json({
-          username: user.username,
-          profile_image: user.profile_image,
-          is_pro: user.is_pro,
-        });
-      } else {
-        console.log('No se encontró al usuario');
-        return res.status(404).json({ message: 'Usuario no encontrado' });
-      }
-    } else {
-      console.log('No hay usuario en la sesión');
-      return res.status(401).json({ message: 'No hay usuario autenticado en la sesión' });
+    const user = await Users.findOne({ where: { username: req.user.username } });
+    if (!user) {
+      return res.status(404).json({ message: 'Usuario no encontrado' });
     }
+
+    res.status(200).json({
+      username: user.username,
+      profile_image: user.profile_image,
+      is_pro: user.is_pro,
+    });
   } catch (error) {
-    console.error('Error al obtener el perfil del usuario:', error);
-    return res.status(500).json({ message: 'Error del servidor' });
+    console.error('Error al obtener el perfil:', error);
+    res.status(500).json({ message: 'Error del servidor' });
   }
 });
 
-// Ruta para cerrar sesión
-router.post('/logout', logout); // Aquí defines la ruta para cerrar sesión
+// Ruta para cerrar sesión (solo redirige en JWT)
+router.post('/logout', logout);
 
 module.exports = router;

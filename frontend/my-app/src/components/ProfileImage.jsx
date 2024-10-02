@@ -7,21 +7,29 @@ function ProfileImage() {
   const [error, setError] = useState(null); // Estado para manejar errores
 
   useEffect(() => {
-    // Hacer una solicitud al backend para obtener la información del perfil
     const fetchUserData = async () => {
       try {
-        const response = await axios.get('https://backmusical.onrender.com/api/auth/profile', { withCredentials: true });
+        // Obtener el token JWT almacenado en localStorage
+        const token = localStorage.getItem('token'); // Asegúrate de que este es el nombre que usas para almacenar el token
+  
+        const response = await axios.get('https://backmusical.onrender.com/api/auth/profile', {
+          headers: {
+            Authorization: `Bearer ${token}`,  // Agrega el token en el encabezado Authorization
+          },
+        });
+  
         console.log(response.data);
-        setUserData(response.data); // Guardar los datos del usuario en el estado
+        setUserData(response.data);
       } catch (err) {
         setError('Error al cargar los datos del usuario');
       } finally {
-        setLoading(false); // Cambiar el estado de carga
+        setLoading(false);
       }
     };
-
+  
     fetchUserData();
-  }, []); // El arreglo vacío asegura que esto solo ocurra al montar el componente
+  }, []);
+  // El arreglo vacío asegura que esto solo ocurra al montar el componente
 
   if (loading) {
     return <div>Cargando...</div>; // Mostrar un mensaje de carga

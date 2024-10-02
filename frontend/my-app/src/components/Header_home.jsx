@@ -6,11 +6,20 @@ function Header() {
 
   const handleLogout = async () => {
     try {
-      const response = await axios.post('https://backmusical.onrender.com/api/auth/logout');
-      console.log(response);
+      const token = localStorage.getItem('token'); // Obtener el token de localStorage
+      const response = await axios.post(
+        'https://backmusical.onrender.com/api/auth/logout',
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,  // Enviar el token en el encabezado Authorization
+          },
+        }
+      );
+  
       if (response.status === 200) {
-        // Redirige a la página principal después de cerrar sesión
-        window.location.replace('https://main.d3swbnx2em39af.amplifyapp.com'); // Asegúrate que esta URL sea la correcta
+        localStorage.removeItem('token'); // Eliminar el token al cerrar sesión
+        window.location.replace('https://main.d3swbnx2em39af.amplifyapp.com');
       } else {
         console.error('Error al cerrar la sesión');
       }
@@ -18,6 +27,7 @@ function Header() {
       console.error('Error en la solicitud de cierre de sesión:', error);
     }
   };
+  
   
   
 

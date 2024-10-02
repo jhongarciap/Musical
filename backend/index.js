@@ -1,36 +1,48 @@
 require('dotenv').config();
 const express = require('express');
-const session = require('express-session'); 
 const sequelize = require('./config/db');
-const User = require('./models/userModel');  
-const authRoutes = require('./routes/authRoutes');  
+const User = require('./models/userModel');
+const authRoutes = require('./routes/authRoutes');
+const cors = require('cors');
 
 const app = express();
 
-const cors = require('cors');
+// Middleware CORS
 app.use(cors({
-  origin: 'https://main.d3swbnx2em39af.amplifyapp.com/', 
-  credentials: true, // Permite enviar cookies
+  origin: 'https://main.d3swbnx2em39af.amplifyapp.com',
+  credentials: true,
 }));
 
 // Middleware para procesar JSON
 app.use(express.json());
 
-// Configuración de express-session
-app.use(session({
-  secret: 'dftz09122003', // Cambia esto por un valor seguro
-  cookie: {secure: true}
-}));
-
-// Usa las rutas de autenticación
-app.use('/api/auth', authRoutes);  
-
-// Sincroniza el modelo con la base de datos
+// Sincronizar la base de datos
 sequelize.sync()
-  .then(() => console.log('La base de datos y las tablas han sido sincronizadas'))
+  .then(() => console.log('La base de datos ha sido sincronizada'))
   .catch(err => console.error('Error al sincronizar la base de datos:', err));
 
-  const PORT = process.env.PORT
-  app.listen(PORT, () => {
-    console.log(`Servidor corriendo en el puerto ${PORT}`);
-  });
+// Rutas de autenticación
+app.use('/api/auth', authRoutes);
+
+// Middleware para verificar el token JWT en rutas privadas
+const authenticateJWT = (req, res, next) => {
+  const token = req.headers.authorization?.split(' ')[1]; // Obtener el token del encabezado
+
+  if (token) {
+    jwt.verify(token, process.env.JWT_SECRET, (err, user) => {
+      if (err) {
+        return res.sendStatus(403); // Token no válido
+      }
+      req.user = user; // Guardar los datos del usuario verificado
+      next();
+    });
+  } else {
+    res.sendStatus(401); // Token no proporcionado
+  }
+};
+
+// Usa el puerto definido en el archivo .env
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+  console.log(`Servidor corriendo en el puerto ${PORT}`);
+});
