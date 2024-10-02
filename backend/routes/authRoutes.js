@@ -13,7 +13,7 @@ router.get('/callback', lastFmCallback);
 router.get('/profile', async (req, res) => {
   try {
     if (req.session && req.session.username) {
-      const user = await Users.findOne({ where: { username: req.session.username } });
+      const user = await Users.findOne({ where: { username } } );
       if (user) {
         return res.status(200).json({
           username: user.username,
