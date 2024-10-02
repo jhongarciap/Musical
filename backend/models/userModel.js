@@ -1,8 +1,4 @@
-// models/User.js
-const { DataTypes } = require('sequelize');
-const sequelize = require('../config/db');
-
-const Users = sequelize.define('Users', {
+const Users = sequelize.define('User', {
   username: {
     type: DataTypes.STRING,
     allowNull: false,
@@ -20,7 +16,6 @@ const Users = sequelize.define('Users', {
     defaultValue: false,
   },
 }, {
-  timestamps: true,
+  tableName: 'Users',  // Especifica el nombre exacto de la tabla en la base de datos
+  timestamps: true,    // Añade automáticamente createdAt y updatedAt
 });
-
-module.exports = Users;
