@@ -60,7 +60,7 @@ const lastFmCallback = async (req, res) => {
    req.session.key = savedUser.session_key;
 
    // Redirige al usuario al dashboard o a donde prefieras
-   res.redirect('https://salmon-sea-0b585031e.5.azurestaticapps.net/dashboard');
+   res.redirect('https://main.d3swbnx2em39af.amplifyapp.com/dashboard');
  } catch (error) {
    console.error('Error fetching session or user info:', error);
    res.status(500).send('Error during authentication');
