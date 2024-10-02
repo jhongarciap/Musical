@@ -37,14 +37,15 @@ const lastFmCallback = async (req, res) => {
       user = await Users.create({
         username: session.name,
         session_key: session.key,
-        profile_image: '',
-        is_pro: false,
+        profile_image: session.profile_image || '', // Asegúrate de que esta variable tenga la URL
+        is_pro: session.is_pro || false,
       });
     } else {
       user.session_key = session.key;
+      user.profile_image = session.profile_image || user.profile_image; // Actualiza la imagen si hay una nueva
       await user.save();
     }
-
+    
     // Generar el JWT
     const jwtToken = jwt.sign(
       { username: session.name, key: session.key },
