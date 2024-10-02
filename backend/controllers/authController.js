@@ -24,48 +24,42 @@ const lastFmCallback = async (req, res) => {
     .update(`api_key${apiKey}methodauth.getSessiontoken${token}${apiSecret}`)
     .digest('hex');
 
- // Hacer la solicitud para obtener la sesión
- const getSessionUrl = `https://ws.audioscrobbler.com/2.0/?method=auth.getSession&api_key=${apiKey}&token=${token}&api_sig=${apiSig}&format=json`;
+  // Hacer la solicitud para obtener la sesión
+  const getSessionUrl = `https://ws.audioscrobbler.com/2.0/?method=auth.getSession&api_key=${apiKey}&token=${token}&api_sig=${apiSig}&format=json`;
 
- try {
-   const response = await axios.get(getSessionUrl);
-   const session = response.data.session;
+  try {
+    const response = await axios.get(getSessionUrl);
+    const session = response.data.session;
 
-   if (!session || !session.name || !session.key) {
-     return res.status(500).send('Error obteniendo la sesión');
-   }
+    // Buscar si el usuario ya existe en la base de datos
+    let user = await User.findOne({ where: { username: session.name } });
 
-   // Hacer la solicitud para obtener la información del usuario
-   const getUserInfoUrl = `https://ws.audioscrobbler.com/2.0/?method=user.getinfo&user=${session.name}&api_key=${apiKey}&format=json`;
+    if (user) {
+      // Si el usuario ya existe, actualiza su session_key
+      user.session_key = session.key;
+      await user.save();
+    } else {
+      // Si el usuario no existe, crea un nuevo registro
+      user = await User.create({
+        username: session.name,
+        session_key: session.key,
+        profile_image: '', // Puedes obtener la imagen más tarde y actualizarla
+        is_pro: false, // Puedes actualizar este campo dependiendo de si es pro o no
+      });
+    }
 
-   const userInfoResponse = await axios.get(getUserInfoUrl);
-   const userInfo = userInfoResponse.data.user;
+    // Guarda el nombre de usuario en la sesión de Express
+    req.session.username = session.name;
+    req.session.key = session.key;
 
-   // Verifica que la imagen esté disponible
-   const profileImage = userInfo.image && userInfo.image.length > 0 ? userInfo.image[2]['#text'] : ''; // Toma la imagen de tamaño medio
-
-   // Preparar los datos del usuario para el POST
-   const userData = {
-     username: session.name,
-     session_key: session.key,
-     profile_image: profileImage, // Guarda la imagen de perfil obtenida
-     is_pro: userInfo.subscriber === 1, // Actualiza si el usuario es pro
-   };
-
-   // Realizar la solicitud POST para guardar el usuario en la base de datos
-   const savedUser = await User.create(userData);
-   
-   // Guarda el nombre de usuario en la sesión de Express
-   req.session.username = savedUser.username;
-   req.session.key = savedUser.session_key;
-
-   // Redirige al usuario al dashboard o a donde prefieras
-   res.redirect('https://main.d3swbnx2em39af.amplifyapp.com/dashboard');
- } catch (error) {
-   console.error('Error fetching session or user info:', error);
-   res.status(500).send('Error during authentication');
- }
+    // Redirige al usuario al dashboard o a donde prefieras
+    res.redirect('https://salmon-sea-0b585031e.5.azurestaticapps.net/dashboard');
+  } catch (error) {
+    console.error('Error fetching session:', error);
+    res.status(500).send('Error during authentication');
+  }
 };
+
 
 // Función para cerrar la sesión
 const logout = (req, res) => {
