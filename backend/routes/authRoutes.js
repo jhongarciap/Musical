@@ -13,7 +13,8 @@ router.get('/callback', lastFmCallback);
 // Ruta protegida para obtener el perfil del usuario
 router.get('/profile', authenticateJWT, async (req, res) => {
   try {
-    const user = await Users.findOne({ where: { username: req.user.username } });
+    // Busca al usuario usando el session_key que se ha almacenado
+    const user = await Users.findOne({ where: { session_key: req.user.key } });
     if (!user) {
       return res.status(404).json({ message: 'Usuario no encontrado' });
     }
@@ -28,6 +29,7 @@ router.get('/profile', authenticateJWT, async (req, res) => {
     res.status(500).json({ message: 'Error del servidor' });
   }
 });
+
 
 // Ruta para cerrar sesión (solo redirige en JWT)
 router.post('/logout', logout);
