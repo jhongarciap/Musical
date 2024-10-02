@@ -27,9 +27,6 @@ function Header() {
       console.error('Error en la solicitud de cierre de sesión:', error);
     }
   };
-  
-  
-  
 
   return (
     <header
