@@ -10,7 +10,7 @@ function ProfileImage() {
     // Hacer una solicitud al backend para obtener la información del perfil
     const fetchUserData = async () => {
       try {
-        const response = await axios.get('back-musical-a8gubqc0afeaejbc.eastus2-01.azurewebsites.net/auth/api/profile', { withCredentials: true });
+        const response = await axios.get('https://backmusical.onrender.com/api/auth/profile', { withCredentials: true });
         console.log(response.data);
         setUserData(response.data); // Guardar los datos del usuario en el estado
       } catch (err) {
