@@ -1,5 +1,5 @@
 const axios = require('axios');
-const User = require('../models/userModel');
+const Users = require('../models/userModel');
 const crypto = require('crypto');
 
 // Redirige a Last.fm para autenticación
@@ -9,6 +9,7 @@ const redirectToLastFm = (req, res) => {
   console.log('Redirecting to:', authUrl);
   res.redirect(authUrl);
 };
+
 const lastFmCallback = async (req, res) => {
   const apiKey = 'c8c448175ee92bd1dac3f498aae48741';
   const apiSecret = '4320daff6a0243097f01c7c13d5fa1fa'; // Reemplaza con tu clave secreta de Last.fm
@@ -32,7 +33,7 @@ const lastFmCallback = async (req, res) => {
     const session = response.data.session;
 
     // Buscar si el usuario ya existe en la base de datos
-    let user = await User.findOne({ where: { username: session.name } });
+    let user = await Users.findOne({ where: { username: session.name } });
 
     if (user) {
       // Si el usuario ya existe, actualiza su session_key
@@ -40,7 +41,7 @@ const lastFmCallback = async (req, res) => {
       await user.save();
     } else {
       // Si el usuario no existe, crea un nuevo registro
-      user = await User.create({
+      user = await Users.create({
         username: session.name,
         session_key: session.key,
         profile_image: '', // Puedes obtener la imagen más tarde y actualizarla
@@ -59,7 +60,6 @@ const lastFmCallback = async (req, res) => {
     res.status(500).send('Error during authentication');
   }
 };
-
 
 // Función para cerrar la sesión
 const logout = (req, res) => {
@@ -81,7 +81,5 @@ const logout = (req, res) => {
     res.status(200).send('No había sesión activa');
   }
 };
-
-
 
 module.exports = { redirectToLastFm, lastFmCallback, logout };
