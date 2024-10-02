@@ -1,6 +1,7 @@
 const express = require('express');
 const { redirectToLastFm, lastFmCallback, logout } = require('../controllers/authController');
 const router = express.Router();
+const Users = require('../models/userModel.js');
 const authenticateJWT = require('../middleware/authenticateJWT.js');  // Middleware para verificar JWT
 
 // Ruta para redirigir a Last.fm
