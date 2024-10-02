@@ -26,21 +26,18 @@ const lastFmCallback = async (req, res) => {
     .digest('hex');
 
   const getSessionUrl = `https://ws.audioscrobbler.com/2.0/?method=auth.getSession&api_key=${apiKey}&token=${token}&api_sig=${apiSig}&format=json`;
-
-  // Obtener detalles del perfil del usuario
-  const profileResponse = await axios.get(
-    `https://ws.audioscrobbler.com/2.0/?method=user.getinfo&user=${session.name}&api_key=${apiKey}&format=json`
-  );
-
-  const userInfo = profileResponse.data.user;
-  const profileImage = userInfo.image.find(img => img.size === 'large')['#text']; // La imagen de perfil
-  const isPro = userInfo.subscriber === '1';  // Comprobar si es usuario Pro
   try {
     const response = await axios.get(getSessionUrl);
     const session = response.data.session;
 
     let user = await Users.findOne({ where: { username: session.name } });
-
+      // Obtener detalles del perfil del usuario
+    const profileResponse = await axios.get(
+    `https://ws.audioscrobbler.com/2.0/?method=user.getinfo&user=${session.name}&api_key=${apiKey}&format=json`
+  );
+  const userInfo = profileResponse.data.user;
+  const profileImage = userInfo.image.find(img => img.size === 'large')['#text']; // La imagen de perfil
+  const isPro = userInfo.subscriber === '1';  // Comprobar si es usuario Pro
     if (!user) {
       user = await Users.create({
         username: session.name,
