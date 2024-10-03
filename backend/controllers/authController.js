@@ -58,7 +58,7 @@ const lastFmCallback = async (req, res) => {
       { expiresIn: '1h' } // Tiempo de expiración del token
     );
 
-  res.redirect(`https://musical-qwcnlz99k-jhongarciaps-projects.vercel.app/callback?token=${jwtToken}`);
+  res.redirect(`https://musical-tawny.vercel.app//callback?token=${jwtToken}`);
   } catch (error) {
     console.error('Error al obtener la sesión:', error);
     res.status(500).send('Error durante la autenticación');
