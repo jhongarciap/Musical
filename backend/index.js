@@ -9,7 +9,7 @@ const app = express();
 
 // Middleware CORS
 app.use(cors({
-  origin: 'https://musical-c5rpimp6w-jhongarciaps-projects.vercel.app',
+  origin: 'https://musical-tawny.vercel.app',
   credentials: true,
 }));
 
