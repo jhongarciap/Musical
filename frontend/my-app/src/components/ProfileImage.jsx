@@ -17,7 +17,6 @@ function ProfileImage() {
             Authorization: `Bearer ${token}`,  // Agrega el token en el encabezado Authorization
           },
         });
-  
         console.log(response.data);
         setUserData(response.data);
       } catch (err) {
