@@ -12,7 +12,7 @@ function Footer() {
         color: 'white',
         width: '100%',
         boxSizing: 'border-box',
-        position: 'fixed', // Hacer el footer fijo
+        //position: 'fixed', // Hacer el footer fijo
         bottom: '0', // Siempre en la parte inferior
         left: '0',
         zIndex: '100', // Asegurarse de que el footer esté sobre el contenido
@@ -23,7 +23,7 @@ function Footer() {
         <p style={{ margin: '0', fontFamily: "'Roboto Condensed', sans-serif" }}>
           Jhon Alejandro García Pareja
           <br />
-          Davi Tovar Zurita
+          David Tovar Zurita
         </p>
       </div>
 
