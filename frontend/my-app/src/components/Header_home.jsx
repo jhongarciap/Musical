@@ -19,7 +19,7 @@ function Header() {
   
       if (response.status === 200) {
         localStorage.removeItem('token'); // Eliminar el token al cerrar sesión
-        window.location.replace('https://musical-qwcnlz99k-jhongarciaps-projects.vercel.app');
+        window.location.replace('https://musical-tawny.vercel.app/');
       } else {
         console.error('Error al cerrar la sesión');
       }
