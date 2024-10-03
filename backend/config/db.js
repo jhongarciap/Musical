@@ -1,8 +1,8 @@
 // config/database.js
 const { Sequelize } = require('sequelize');
-const DB_NAME= 'dbmusical' ;
-const DB_USER= 'admin';
-const DB_PASS= 'rootroot';
+const DB_NAME= 'bjhtjgrkhzkxtt5lmea1-mysql.services.clever-cloud.com' ;
+const DB_USER= 'usfy8glqtde9q4hc';
+const DB_PASS= 'j5cZP6qW0J33Y1UslxJP';
 const DB_HOST='dbmusical.ctciuwqyutqi.us-east-2.rds.amazonaws.com' ;
 // Conectar a MySQL usando Sequelize
 const sequelize = new Sequelize(DB_NAME, DB_USER, DB_PASS, {
