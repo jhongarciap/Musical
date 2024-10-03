@@ -19,7 +19,7 @@ function Header() {
   
       if (response.status === 200) {
         localStorage.removeItem('token'); // Eliminar el token al cerrar sesión
-        window.location.replace('https://main.d3swbnx2em39af.amplifyapp.com');
+        window.location.replace('https://salmon-sea-0b585031e.5.azurestaticapps.net');
       } else {
         console.error('Error al cerrar la sesión');
       }
