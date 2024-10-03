@@ -58,7 +58,7 @@ const lastFmCallback = async (req, res) => {
       { expiresIn: '1h' } // Tiempo de expiración del token
     );
 
-  res.redirect(`https://salmon-sea-0b585031e.5.azurestaticapps.net/dashboard`);
+  res.redirect(`http://localhost:3001/callback?token=${jwtToken}`);
   } catch (error) {
     console.error('Error al obtener la sesión:', error);
     res.status(500).send('Error durante la autenticación');
