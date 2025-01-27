@@ -41,6 +41,10 @@ const authenticateJWT = (req, res, next) => {
   }
 };
 
+const scrobbleRoutes = require('./routes/scrobbleRoutes');
+app.use('/api', scrobbleRoutes);
+
+
 // Usa el puerto definido en el archivo .env
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
