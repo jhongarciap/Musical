@@ -30,8 +30,8 @@ Song.belongsToMany(Genre, { through: SongXGenre, foreignKey: 'song_id' });
 Genre.belongsToMany(Song, { through: SongXGenre, foreignKey: 'genre_id' });
 
 // Relaciones Album <-> Artist
-Album.belongsTo(Artist, { foreignKey: 'id_artist' });
-Artist.hasMany(Album, { foreignKey: 'id_artist' });
+Artist.belongsTo(Album, { foreignKey: 'id_artist' });
+Album.hasMany(Artist, { foreignKey: 'id_artist' });
 
 // Relaciones Song <-> Scrobble
 Scrobble.belongsTo(Song, { foreignKey: 'id_song' });
