@@ -70,7 +70,7 @@ const lastFmCallback = async (req, res) => {
     const scrobbles = recentTracks.map((track) => ({
       songName: track.name,
       artistName: track.artist['#text'],
-      albumName: track.album['#text'],
+      albumName: track.album['#text'] ? track.album['#text']: "Unknown Album",
       date: track.date ? track.date.uts : Math.floor(Date.now() / 1000),
       count: 1, // Ajusta según tu lógica
       year: null, // Si quieres capturar el año, necesitarías extraerlo de otra fuente
