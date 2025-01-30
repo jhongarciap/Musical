@@ -1,4 +1,4 @@
-const { Song, Artist, Album, Scrobble } = require('../models');
+const { Song, Artist, Album, Scrobble, SongXArtist, SongXAlbum } = require('../models');
 
 async function saveScrobbles(req, res) {
   try {
@@ -7,47 +7,52 @@ async function saveScrobbles(req, res) {
     for (const track of scrobbles) {
       // 1. Buscar o crear el artista
       let artist = await Artist.findOne({ where: { name: track.artistName } });
-    
       if (!artist) {
         artist = await Artist.create({ name: track.artistName });
       }
-    
+
       // 2. Buscar o crear el álbum
-      let album = await Album.findOne({ 
-        where: { name: track.albumName, id_artist: artist.id } 
-      });
-    
+      let album = await Album.findOne({ where: { name: track.albumName } });
       if (!album) {
-        album = await Album.create({ 
-          name: track.albumName, 
-          id_artist: artist.id 
-        });
+        album = await Album.create({ name: track.albumName });
       }
-    
-      // 3. Buscar o crear la canción en la tabla Song
-      let song = await Song.findOne({
-        where: { name: track.songName, id_artist: artist.id, id_album: album.id }
-      });
-    
+
+      // 3. Buscar o crear la canción
+      let song = await Song.findOne({ where: { name: track.songName } });
       if (!song) {
         song = await Song.create({
           name: track.songName,
-          id_artist: artist.id,
-          id_album: album.id
+          year: track.year,
+          length: track.length
         });
       }
-    
-      // 4. Guardar el scrobble con la canción
+
+      // 4. Asociar la canción con el artista en SongXArtist
+      let songArtist = await SongXArtist.findOne({
+        where: { song_id: song.id, artist_id: artist.id }
+      });
+      if (!songArtist) {
+        await SongXArtist.create({ song_id: song.id, artist_id: artist.id });
+      }
+
+      // 5. Asociar la canción con el álbum en SongXAlbum
+      let songAlbum = await SongXAlbum.findOne({
+        where: { song_id: song.id, album_id: album.id }
+      });
+      if (!songAlbum) {
+        await SongXAlbum.create({ song_id: song.id, album_id: album.id });
+      }
+
+      // 6. Guardar el scrobble
       await Scrobble.create({
-        song_id: song.id, // Ahora referencia la canción correctamente
-        artist_id: artist.id,
-        album_id: album.id,
+        song_id: song.id,
         date: track.date,
         count: track.count,
         year: track.year,
         length: track.length
       });
-    }    
+    }
+
     return res.status(200).json({ message: 'Scrobbles guardados correctamente' });
   } catch (error) {
     console.error(error);
