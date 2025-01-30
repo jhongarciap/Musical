@@ -68,4 +68,4 @@ Object.keys(db).forEach(modelName => {
 db.sequelize = sequelize;
 db.Sequelize = Sequelize;
 
-module.exports = { db, Song, Artist, Album, Genre, Scrobble };
+module.exports = { db, Song, Artist, Album, Genre, Scrobble, SongXAlbum, SongXArtist, SongXGenre };
