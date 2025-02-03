@@ -105,9 +105,9 @@ async function saveScrobbles(req, res) {
       let [artist, artistCreated] = await Artist.findOrCreate({ where: { name: track.artistName },
       defaults: {picture: artistphoto}
       });
-      
-      if (!artistCreated && artist.picture !== artistPhoto) {
-        artist.picture = artistPhoto; // Actualizar la foto
+
+      if (!artistCreated && artist.picture !== artistphoto) {
+        artist.picture = artistphoto; // Actualizar la foto
         await artist.save(); // Guardar el cambio
       }
 
