@@ -46,6 +46,7 @@ async function saveScrobbles(req, res) {
       // 6. Guardar el scrobble
       await Scrobble.create({
         song_id: song.id,
+        id_user: req.user.id,  // Agregar id_user
         date: track.date,
         count: track.count,
         year: track.year,
