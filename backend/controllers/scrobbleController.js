@@ -4,6 +4,13 @@ async function saveScrobbles(req, res) {
   try {
     const { scrobbles } = req.body;
 
+    // Contar cuántas veces se ha scrobbleado cada canción
+    const scrobbleCounts = {};
+    scrobbles.forEach(track => {
+      const key = `${track.songName}-${track.artistName}`;
+      scrobbleCounts[key] = (scrobbleCounts[key] || 0) + 1;
+    });
+
     for (const track of scrobbles) {
       // 1. Buscar o crear el artista
       let [artist] = await Artist.findOrCreate({ where: { name: track.artistName } });
@@ -17,36 +24,30 @@ async function saveScrobbles(req, res) {
         defaults: { year: track.year, length: track.length }
       });
 
-      // Si la canción se creó, forzar recarga para obtener el ID
       if (created) {
         await song.reload();
       }
 
-      // 🔹 Verificar que la canción tiene un ID antes de continuar
       if (!song.id) {
         console.error("🚨 Error: No se pudo obtener el ID de la canción");
-        continue; // Saltar esta iteración si la canción no tiene ID
+        continue;
       }
 
       // 4. Asociar la canción con el artista en SongXArtist
-      await SongXArtist.findOrCreate({
-        where: { song_id: song.id, artist_id: artist.id }
-      });
+      await SongXArtist.findOrCreate({ where: { song_id: song.id, artist_id: artist.id } });
 
       // 5. Asociar la canción con el álbum en SongXAlbum
-      await SongXAlbum.findOrCreate({
-        where: { song_id: song.id, album_id: album.id }
-      });
+      await SongXAlbum.findOrCreate({ where: { song_id: song.id, album_id: album.id } });
 
-      // 6. Guardar el scrobble
+      // 6. Guardar el scrobble con la fecha y la cantidad de veces que aparece
       await Scrobble.create({
-        id_song: song.id,  // Ahora siempre tendrá un valor válido
-        id_user: req.user.id,  // Verifica que req.user.id no sea undefined
-        date: track.date,
-        count: track.count
+        id_song: song.id,
+        id_user: req.user.id,
+        date: new Date(track.date * 1000),  // Convertir Unix Timestamp a Date
+        count: scrobbleCounts[`${track.songName}-${track.artistName}`] // Obtener el conteo correcto
       });
 
-      console.log(`✅ Scrobble guardado: ${track.songName} - ${track.artistName}`);
+      console.log(`✅ Scrobble guardado: ${track.songName} - ${track.artistName} | Fecha: ${new Date(track.date * 1000)} | Count: ${scrobbleCounts[`${track.songName}-${track.artistName}`]}`);
     }
 
     return res.status(200).json({ message: 'Scrobbles guardados correctamente' });
