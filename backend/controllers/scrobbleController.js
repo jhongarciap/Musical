@@ -21,38 +21,55 @@ async function fetchAlbumCover(albumName, artistName) {
   }
 }
 
-// Función para obtener la foto del artista desde Last.fm
-// Función para obtener la foto del artista desde Last.fm
-async function fetchArtistPhoto(artistName) {
-  const apiKey = 'c8c448175ee92bd1dac3f498aae48741'; // Reemplaza con tu API Key de Last.fm
-  const url = `https://ws.audioscrobbler.com/2.0/?method=artist.getinfo&api_key=${apiKey}&artist=${artistName}&format=json`;
+const axios = require('axios');
+
+// Función para obtener el ID del artista desde Spotify
+async function fetchSpotifyArtistId(artistName) {
+  const token = '286cbc74b5c241a9a20ab338d85c8093'; // Necesitas autenticarte para obtener un token
+  const url = `https://api.spotify.com/v1/search?q=${encodeURIComponent(artistName)}&type=artist&limit=1`;
 
   try {
-    const response = await axios.get(url);
-    const artistData = response.data.artist;
-    console.log(artistData); // Ver la estructura completa de la respuesta
-
-    // Verificar si existen imágenes
-    if (artistData.image && artistData.image.length > 0) {
-      // Tomar la primera imagen de la lista de imágenes disponibles
-      const photo = artistData.image[0]['#text'];
-      
-      if (photo) {
-        return photo; // Regresa la primera imagen disponible
-      } else {
-        console.log('No se encontró una imagen válida');
+    const response = await axios.get(url, {
+      headers: {
+        'Authorization': `Bearer ${token}`
       }
+    });
+
+    const artistData = response.data.artists.items[0]; // Obtener el primer resultado
+
+    if (artistData) {
+      return artistData.id; // Devuelve el ID del artista
     } else {
-      console.log('No se encontraron imágenes en la respuesta de Last.fm');
+      console.log("Artista no encontrado en Spotify");
+      return null;
     }
-    return null; // Si no hay foto, retornamos null
   } catch (error) {
-    console.error("Error al obtener los datos del artista:", error);
+    console.error("Error al obtener el ID del artista de Spotify:", error);
     return null;
   }
 }
 
+// Función para obtener la foto del artista desde Spotify
+async function fetchSpotifyArtistPhoto(artistId) {
+  const token = '286cbc74b5c241a9a20ab338d85c8093'; // Necesitas autenticarte para obtener un token
+  const url = `https://api.spotify.com/v1/artists/${artistId}`;
 
+  try {
+    const response = await axios.get(url, {
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
+    });
+
+    const artistData = response.data;
+    const artistImage = artistData.images[0]?.url; // Obtener la imagen más grande
+
+    return artistImage; // Devuelve la URL de la imagen
+  } catch (error) {
+    console.error("Error al obtener la imagen de Spotify:", error);
+    return null;
+  }
+}
 
 // Función para guardar los scrobbles
 async function saveScrobbles(req, res) {
@@ -70,12 +87,13 @@ async function saveScrobbles(req, res) {
       // 1. Buscar o crear el artista
 
       let [artist] = await Artist.findOrCreate({ where: { name: track.artistName }});
-      const artistPhoto = await fetchArtistPhoto(track.artistName);
-
-      // Si obtenemos una foto válida, la guardamos en el artista
-      if (artistPhoto) {
-        artist.picture = artistPhoto; // Asignar la URL de la foto
-        await artist.save();
+      const artistId = await fetchSpotifyArtistId(track.artistName);
+      if (artistId) {
+        const artistPhoto = await fetchSpotifyArtistPhoto(artistId);
+        if (artistPhoto) {
+          artist.picture = artistPhoto; // Asignar la URL de la foto
+          await artist.save();
+        }
       }
       // 2. Obtener la portada del álbum desde Last.fm
       const portada = await fetchAlbumCover(track.albumName, track.artistName);
