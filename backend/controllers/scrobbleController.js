@@ -44,10 +44,10 @@ async function saveScrobbles(req, res) {
         id_song: song.id,
         id_user: req.user.id,
         date: new Date(track.date * 1000),  // Convertir Unix Timestamp a Date
-        count: scrobbleCounts[`${track.songName}-${track.artistName}`] // Obtener el conteo correcto
+        count: track.count // Obtener el conteo correcto
       });
 
-      console.log(`✅ Scrobble guardado: ${track.songName} - ${track.artistName} | Fecha: ${new Date(track.date * 1000)} | Count: ${scrobbleCounts[`${track.songName}-${track.artistName}`]}`);
+      console.log(`✅ Scrobble guardado: ${track.songName} - ${track.artistName} | Fecha: ${new Date(track.date * 1000)} | Count: ${track.count}`);
     }
 
     return res.status(200).json({ message: 'Scrobbles guardados correctamente' });
