@@ -22,6 +22,7 @@ async function fetchAlbumCover(albumName, artistName) {
 }
 
 // Función para obtener la foto del artista desde Last.fm
+// Función para obtener la foto del artista desde Last.fm
 async function fetchArtistPhoto(artistName) {
   const apiKey = 'c8c448175ee92bd1dac3f498aae48741'; // Reemplaza con tu API Key de Last.fm
   const url = `https://ws.audioscrobbler.com/2.0/?method=artist.getinfo&api_key=${apiKey}&artist=${artistName}&format=json`;
@@ -30,18 +31,26 @@ async function fetchArtistPhoto(artistName) {
     const response = await axios.get(url);
     const artistData = response.data.artist;
 
-    // Buscar la imagen de la foto de tamaño 'large'
-    const photo = artistData.image[0]['#text']; // Si no hay 'mega' ni 'large', usamos la primera disponible
+    // Verificar si el campo image existe y contiene imágenes
+    if (artistData && artistData.image && Array.isArray(artistData.image)) {
+      // Preferir la imagen de tamaño 'mega', sino usar 'large', sino la primera disponible
+      let photo = artistData.image.find(image => image.size === 'mega') || 
+                  artistData.image.find(image => image.size === 'large') || 
+                  artistData.image[0]; // Si no hay 'mega' ni 'large', tomamos la primera imagen disponible
 
+      if (photo && photo['#text']) {
+        return photo['#text']; // Retornar solo la URL de la imagen
+      }
+    }
 
-
-
-    return photo; // Devuelve la URL de la foto del artista
+    // Si no encontramos ninguna imagen válida, retornar null
+    return null;
   } catch (error) {
     console.error("Error al obtener los datos del artista:", error);
-    return null; // Si hay un error, devolvemos null
+    return null; // Si hay un error, devolver null
   }
 }
+
 
 // Función para guardar los scrobbles
 async function saveScrobbles(req, res) {
