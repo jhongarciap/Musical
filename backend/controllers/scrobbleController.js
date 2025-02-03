@@ -1,5 +1,26 @@
 const { Song, Artist, Album, Scrobble, SongXArtist, SongXAlbum, Genre, SongXGenre } = require('../models');
+const axios = require('axios'); // Asegúrate de tener axios instalado para realizar las peticiones HTTP
 
+// Función para obtener la portada desde Last.fm
+async function fetchAlbumCover(albumName, artistName) {
+  const apiKey = 'c8c448175ee92bd1dac3f498aae48741'; // Reemplaza con tu API Key de Last.fm
+  const url = `https://ws.audioscrobbler.com/2.0/?method=album.getinfo&api_key=${apiKey}&artist=${artistName}&album=${albumName}&format=json`;
+
+  try {
+    const response = await axios.get(url);
+    const albumData = response.data.album;
+
+    // Buscar la imagen de la portada de tamaño 'large'
+    const portada = albumData.image.find(image => image.size === 'large')['#text'];
+
+    return portada; // Devuelve la URL de la portada
+  } catch (error) {
+    console.error("Error al obtener los datos del álbum:", error);
+    return null; // Si hay un error, devolvemos null
+  }
+}
+
+// Función para guardar los scrobbles
 async function saveScrobbles(req, res) {
   try {
     const { scrobbles } = req.body;
@@ -15,10 +36,22 @@ async function saveScrobbles(req, res) {
       // 1. Buscar o crear el artista
       let [artist] = await Artist.findOrCreate({ where: { name: track.artistName } });
 
-      // 2. Buscar o crear el álbum
-      let [album] = await Album.findOrCreate({ where: { name: track.albumName, id_artist: artist.id } });
+      // 2. Obtener la portada del álbum desde Last.fm
+      const portada = await fetchAlbumCover(track.albumName, track.artistName);
 
-      // 3. Buscar o crear la canción
+      // 3. Buscar o crear el álbum
+      let [album, albumCreated] = await Album.findOrCreate({
+        where: { name: track.albumName, id_artist: artist.id },
+        defaults: { cover: portada } // Guardar la portada en la creación
+      });
+
+      // Si el álbum ya existía, actualizamos la portada
+      if (!albumCreated && portada && album.cover !== portada) {
+        album.cover = portada;
+        await album.save();
+      }
+
+      // 4. Buscar o crear la canción
       let [song, SongCreated] = await Song.findOrCreate({
         where: { name: track.songName },
       });
@@ -26,6 +59,7 @@ async function saveScrobbles(req, res) {
       let [genreRecord, GenreCreated] = await Genre.findOrCreate({
         where: { name: track.genre }
       });
+
       console.log(`Género: ${genreRecord.name} ${GenreCreated ? "(Nuevo)" : "(Existente)"}`);
       if (SongCreated) {
         await song.reload();
@@ -36,10 +70,10 @@ async function saveScrobbles(req, res) {
         continue;
       }
 
-      // 4. Asociar la canción con el artista en SongXArtist
+      // 5. Asociar la canción con el artista en SongXArtist
       await SongXArtist.findOrCreate({ where: { song_id: song.id, artist_id: artist.id } });
 
-      // 5. Asociar la canción con el álbum en SongXAlbum
+      // 6. Asociar la canción con el álbum en SongXAlbum
       await SongXAlbum.findOrCreate({ where: { song_id: song.id, album_id: album.id } });
 
       // Buscar o crear la relación entre la canción y el género
@@ -47,7 +81,7 @@ async function saveScrobbles(req, res) {
         where: { song_id: song.id, genre_id: genreRecord.id }
       });
 
-      // 6. Guardar el scrobble con la fecha y la cantidad de veces que aparece
+      // 7. Guardar el scrobble con la fecha y la cantidad de veces que aparece
       await Scrobble.create({
         id_song: song.id,
         id_user: req.user.id,

@@ -10,6 +10,10 @@ const Album = sequelize.define('Album', {
     type: DataTypes.INTEGER,
     allowNull: false,
   },
+  cover: {
+    type: DataTypes.STRING,
+    allowNull: true,
+  },
 }, {
   timestamps: false,
 });
