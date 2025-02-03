@@ -59,14 +59,15 @@ async function saveScrobbles(req, res) {
 
     for (const track of scrobbles) {
       // 1. Buscar o crear el artista
+
+      let [artist] = await Artist.findOrCreate({ where: { name: track.artistName }});
       const artistPhoto = await fetchArtistPhoto(track.artistName);
 
-      let [artist, artistCreated] = await Artist.findOrCreate({ where: { name: track.artistName }, defaults: {picture:artistPhoto} });
-      if (!artistCreated && artistPhoto && artist.picture !== artistPhoto) {
-        artist.picture = artistPhoto; // Asignamos la nueva foto
-        await artist.save(); // Guardamos la actualización
+      // Si obtenemos una foto válida, la guardamos en el artista
+      if (artistPhoto) {
+        artist.picture = artistPhoto; // Asignar la URL de la foto
+        await artist.save();
       }
-
       // 2. Obtener la portada del álbum desde Last.fm
       const portada = await fetchAlbumCover(track.albumName, track.artistName);
 
