@@ -30,26 +30,28 @@ async function fetchArtistPhoto(artistName) {
   try {
     const response = await axios.get(url);
     const artistData = response.data.artist;
+    console.log(artistData); // Ver la estructura completa de la respuesta
 
-    // Verificar si el campo image existe y contiene imágenes
-    if (artistData && artistData.image && Array.isArray(artistData.image)) {
-      // Preferir la imagen de tamaño 'mega', sino usar 'large', sino la primera disponible
-      let photo = artistData.image.find(image => image.size === 'mega') || 
-                  artistData.image.find(image => image.size === 'large') || 
-                  artistData.image[0]; // Si no hay 'mega' ni 'large', tomamos la primera imagen disponible
-
-      if (photo && photo['#text']) {
-        return photo['#text']; // Retornar solo la URL de la imagen
+    // Verificar si existen imágenes
+    if (artistData.image && artistData.image.length > 0) {
+      // Tomar la primera imagen de la lista de imágenes disponibles
+      const photo = artistData.image[0]['#text'];
+      
+      if (photo) {
+        return photo; // Regresa la primera imagen disponible
+      } else {
+        console.log('No se encontró una imagen válida');
       }
+    } else {
+      console.log('No se encontraron imágenes en la respuesta de Last.fm');
     }
-
-    // Si no encontramos ninguna imagen válida, retornar null
-    return null;
+    return null; // Si no hay foto, retornamos null
   } catch (error) {
     console.error("Error al obtener los datos del artista:", error);
-    return null; // Si hay un error, devolver null
+    return null;
   }
 }
+
 
 
 // Función para guardar los scrobbles
