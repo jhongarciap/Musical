@@ -31,9 +31,9 @@ async function fetchArtistPhoto(artistName) {
     const artistData = response.data.artist;
 
     // Buscar la imagen de la foto de tamaño 'large'
-    const photo = artistData.image.find(image => image.size === 'large')||
-    artistData.image.find(image => image.size === 'large') || // Si no existe una imagen mega, buscamos 'large'
-    artistData.image[0]; // Si no hay 'mega' ni 'large', usamos la primera disponible
+    const photo = artistData.image.find(image => image.size === 'large')['#text']||
+    artistData.image.find(image => image.size === 'large') ['#text']|| // Si no existe una imagen mega, buscamos 'large'
+    artistData.image[0]['#text']; // Si no hay 'mega' ni 'large', usamos la primera disponible
 
 
 
