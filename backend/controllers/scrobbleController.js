@@ -20,6 +20,25 @@ async function fetchAlbumCover(albumName, artistName) {
   }
 }
 
+// Función para obtener la foto del artista desde Last.fm
+async function fetchArtistPhoto(artistName) {
+  const apiKey = 'c8c448175ee92bd1dac3f498aae48741'; // Reemplaza con tu API Key de Last.fm
+  const url = `https://ws.audioscrobbler.com/2.0/?method=artist.getinfo&api_key=${apiKey}&artist=${artistName}&format=json`;
+
+  try {
+    const response = await axios.get(url);
+    const artistData = response.data.artist;
+
+    // Buscar la imagen de la foto de tamaño 'large'
+    const photo = artistData.image.find(image => image.size === 'large')['#text'];
+
+    return photo; // Devuelve la URL de la foto del artista
+  } catch (error) {
+    console.error("Error al obtener los datos del artista:", error);
+    return null; // Si hay un error, devolvemos null
+  }
+}
+
 // Función para guardar los scrobbles
 async function saveScrobbles(req, res) {
   try {
@@ -34,7 +53,13 @@ async function saveScrobbles(req, res) {
 
     for (const track of scrobbles) {
       // 1. Buscar o crear el artista
-      let [artist] = await Artist.findOrCreate({ where: { name: track.artistName } });
+      const artistPhoto = await fetchArtistPhoto(track.artistName);
+
+      let [artist] = await Artist.findOrCreate({ where: { name: track.artistName }, defaults: {picture:artistPhoto} });
+      if (artistPhoto && artist.picture !== artistPhoto) {
+        artist.picture = artistPhoto; // Asignamos la nueva foto
+        await artist.save(); // Guardamos la actualización
+      }
 
       // 2. Obtener la portada del álbum desde Last.fm
       const portada = await fetchAlbumCover(track.albumName, track.artistName);

@@ -6,6 +6,10 @@ const Artist = sequelize.define('Artist', {
     type: DataTypes.STRING,
     allowNull: false,
   },
+  picture: {
+    type: DataTypes.STRING,
+    allowNull: false,
+  },
 }, {
   timestamps: false,
 });

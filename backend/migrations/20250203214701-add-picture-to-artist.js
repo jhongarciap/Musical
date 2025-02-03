@@ -4,8 +4,8 @@
 module.exports = {
   up: async (queryInterface, Sequelize) => {
     await queryInterface.addColumn('Artists', 'picture', {
-      type: Sequelize.STRING,
-      allowNull: true,
+      type: Sequelize.STRING,  // o Sequelize.BLOB si la imagen será un archivo binario
+      allowNull: true,  // O false si la columna es obligatoria
     });
   },
 
