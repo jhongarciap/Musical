@@ -21,16 +21,33 @@ async function fetchAlbumCover(albumName, artistName) {
   }
 }
 
+// Función para obtener el Access Token usando Client Credentials Flow
+async function getSpotifyAccessToken() {
+  const clientId = 'dd5a280c218648679c20cda2dc10abe7'; // Reemplaza con tu Client ID
+  const clientSecret = '9c43adcee70e4a88ab0f57f02cadd961'; // Reemplaza con tu Client Secret
+
+  const response = await axios.post('https://accounts.spotify.com/api/token', null, {
+    params: {
+      grant_type: 'client_credentials',
+    },
+    headers: {
+      'Authorization': 'Basic ' + Buffer.from(`${clientId}:${clientSecret}`).toString('base64'),
+    },
+  });
+
+  return response.data.access_token; // Devuelve el token de acceso
+}
+
 // Función para obtener el ID del artista desde Spotify
 async function fetchSpotifyArtistId(artistName) {
-  const token = '286cbc74b5c241a9a20ab338d85c8093'; // Necesitas autenticarte para obtener un token
+  const token = await getSpotifyAccessToken(); // Obtener el token de acceso
   const url = `https://api.spotify.com/v1/search?q=${encodeURIComponent(artistName)}&type=artist&limit=1`;
 
   try {
     const response = await axios.get(url, {
       headers: {
-        'Authorization': `Bearer ${token}`
-      }
+        'Authorization': `Bearer ${token}`,
+      },
     });
 
     const artistData = response.data.artists.items[0]; // Obtener el primer resultado
@@ -49,14 +66,14 @@ async function fetchSpotifyArtistId(artistName) {
 
 // Función para obtener la foto del artista desde Spotify
 async function fetchSpotifyArtistPhoto(artistId) {
-  const token = '286cbc74b5c241a9a20ab338d85c8093'; // Necesitas autenticarte para obtener un token
+  const token = await getSpotifyAccessToken(); // Obtener el token de acceso
   const url = `https://api.spotify.com/v1/artists/${artistId}`;
 
   try {
     const response = await axios.get(url, {
       headers: {
-        'Authorization': `Bearer ${token}`
-      }
+        'Authorization': `Bearer ${token}`,
+      },
     });
 
     const artistData = response.data;
