@@ -21,7 +21,6 @@ async function saveScrobbles(req, res) {
       // 3. Buscar o crear la canción
       let [song, SongCreated] = await Song.findOrCreate({
         where: { name: track.songName },
-        defaults: { year: track.year, length: track.length }
       });
 
       let [genreRecord, GenreCreated] = await Genre.findOrCreate({

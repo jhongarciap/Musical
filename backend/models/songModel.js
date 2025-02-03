@@ -6,15 +6,8 @@ const Song = sequelize.define('Song', {
     type: DataTypes.STRING,
     allowNull: false,
   },
-  year: {
-    type: DataTypes.INTEGER,
-    allowNull: true,
-  },
-  length: {
-    type: DataTypes.STRING,
-    allowNull: true,
-  },
 }, {
+  tableName: 'Songs',
   timestamps: false,
 });
 
