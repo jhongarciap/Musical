@@ -11,7 +11,8 @@ async function fetchAlbumCover(albumName, artistName) {
     const albumData = response.data.album;
 
     // Buscar la imagen de la portada de tamaño 'large'
-    const portada = albumData.image.find(image => image.size === 'large')['#text'];
+    const portada = albumData.image.find(image => image.size === 'large')['#text']
+    
 
     return portada; // Devuelve la URL de la portada
   } catch (error) {
@@ -30,7 +31,12 @@ async function fetchArtistPhoto(artistName) {
     const artistData = response.data.artist;
 
     // Buscar la imagen de la foto de tamaño 'large'
-    const photo = artistData.image.find(image => image.size === 'large')['#text'];
+    const photo = artistData.image.find(image => image.size === 'large')||
+    artistData.image.find(image => image.size === 'large') || // Si no existe una imagen mega, buscamos 'large'
+    artistData.image[0]; // Si no hay 'mega' ni 'large', usamos la primera disponible
+
+
+
 
     return photo; // Devuelve la URL de la foto del artista
   } catch (error) {
