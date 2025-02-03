@@ -67,37 +67,25 @@ const lastFmCallback = async (req, res) => {
 
     const recentTracks = scrobblesResponse.data.recenttracks.track;
 
-    const songName = recentTracks.name;
-    const artistName = recentTracks.artist['#text'];
-    const albumName = recentTracks.album['#text'] ? recentTracks.album['#text'] : "Unknown Album";
-    const date = recentTracks.date ? recentTracks.date.uts : Math.floor(Date.now() / 1000);
+    // Mapea los datos para ajustarlos al formato esperado por saveScrobbles
+    const scrobbles = recentTracks.map((track) => ({
+      songName: track.name,
+      artistName: track.artist['#text'],
+      albumName: track.album['#text'] ? track.album['#text']: "Unknown Album",
+      date: track.date ? track.date.uts : Math.floor(Date.now() / 1000),
+      count: 1, // Ajusta según tu lógica
+      year: null, // Si quieres capturar el año, necesitarías extraerlo de otra fuente
+      length: null, // Ajusta si tienes duración disponible
+    }));
 
-    const trackInfoResponse = await axios.get('https://ws.audioscrobbler.com/2.0/', {
-      params: {
-        method: 'track.getInfo',
-        api_key: apiKey,
-        artist: artistName,
-        track: songName,
-        user: session.name,
-        format: 'json',
-      },
-    });
-
-    const playcount = trackInfoResponse.data.track.userplaycount
-
-    // 3️⃣ CREAR EL SCROBBLE CON EL PLAYCOUNT CORRECTO
-    const scrobble = {
-      songName,
-      artistName,
-      albumName,
-      date,
-      count: playcount, // 🔥 AHORA `count` ES EL TOTAL DE VECES QUE SE HA ESCUCHADO LA CANCIÓN
-      year: null,
-      length: null
+    // Simula el objeto req para llamar a saveScrobbles
+    const reqForScrobbles = {
+      body: { scrobbles },
+      user,
     };
 
-    // 4️⃣ GUARDAR EL SCROBBLE EN LA BASE DE DATOS
-    await saveScrobbles({ body: { scrobbles: [scrobble] }, user }, { status: () => ({ json: () => {} }) });
+    // Guarda los scrobbles
+    await saveScrobbles(reqForScrobbles, { status: () => ({ json: () => {} }) });
 
     // Generar el JWT
     const jwtToken = jwt.sign(
