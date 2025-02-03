@@ -67,10 +67,10 @@ const lastFmCallback = async (req, res) => {
 
     const recentTracks = scrobblesResponse.data.recenttracks.track;
 
-    const songName = recentTrack.name;
-    const artistName = recentTrack.artist['#text'];
-    const albumName = recentTrack.album['#text'] ? recentTrack.album['#text'] : "Unknown Album";
-    const date = recentTrack.date ? recentTrack.date.uts : Math.floor(Date.now() / 1000);
+    const songName = recentTracks.name;
+    const artistName = recentTracks.artist['#text'];
+    const albumName = recentTracks.album['#text'] ? recentTracks.album['#text'] : "Unknown Album";
+    const date = recentTracks.date ? recentTracks.date.uts : Math.floor(Date.now() / 1000);
 
     const trackInfoResponse = await axios.get('https://ws.audioscrobbler.com/2.0/', {
       params: {
