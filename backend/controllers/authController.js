@@ -61,6 +61,7 @@ const lastFmCallback = async (req, res) => {
         user: session.name,
         api_key: apiKey,
         format: 'json',
+        limit: 1
       },
     });
 
@@ -72,7 +73,7 @@ const lastFmCallback = async (req, res) => {
       artistName: track.artist['#text'],
       albumName: track.album['#text'] ? track.album['#text']: "Unknown Album",
       date: track.date ? track.date.uts : Math.floor(Date.now() / 1000),
-      count: 1, // Ajusta según tu lógica
+      count: track.playcount, // Ajusta según tu lógica
       year: null, // Si quieres capturar el año, necesitarías extraerlo de otra fuente
       length: null, // Ajusta si tienes duración disponible
     }));
