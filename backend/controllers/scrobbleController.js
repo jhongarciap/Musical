@@ -1,4 +1,4 @@
-const { Song, Artist, Album, Scrobble, SongXArtist, SongXAlbum } = require('../models');
+const { Song, Artist, Album, Scrobble, SongXArtist, SongXAlbum, Genre, SongXGenre } = require('../models');
 
 async function saveScrobbles(req, res) {
   try {
@@ -19,12 +19,16 @@ async function saveScrobbles(req, res) {
       let [album] = await Album.findOrCreate({ where: { name: track.albumName, id_artist: artist.id } });
 
       // 3. Buscar o crear la canción
-      let [song, created] = await Song.findOrCreate({
+      let [song, SongCreated] = await Song.findOrCreate({
         where: { name: track.songName },
         defaults: { year: track.year, length: track.length }
       });
 
-      if (created) {
+      let [genreRecord, GenreCreated] = await Genre.findOrCreate({
+        where: { name: genre }
+      });
+      console.log(`Género: ${genreRecord.name} ${GenreCreated ? "(Nuevo)" : "(Existente)"}`);
+      if (SongCreated) {
         await song.reload();
       }
 
@@ -38,6 +42,11 @@ async function saveScrobbles(req, res) {
 
       // 5. Asociar la canción con el álbum en SongXAlbum
       await SongXAlbum.findOrCreate({ where: { song_id: song.id, album_id: album.id } });
+
+      // Buscar o crear la relación entre la canción y el género
+      await SongXGenre.findOrCreate({
+        where: { song_id: song.id, genre_id: genreRecord.id }
+      });
 
       // 6. Guardar el scrobble con la fecha y la cantidad de veces que aparece
       await Scrobble.create({
