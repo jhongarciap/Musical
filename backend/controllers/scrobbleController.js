@@ -25,7 +25,7 @@ async function saveScrobbles(req, res) {
       });
 
       let [genreRecord, GenreCreated] = await Genre.findOrCreate({
-        where: { name: genre }
+        where: { name: track.genre }
       });
       console.log(`Género: ${genreRecord.name} ${GenreCreated ? "(Nuevo)" : "(Existente)"}`);
       if (SongCreated) {

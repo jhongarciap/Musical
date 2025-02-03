@@ -90,6 +90,7 @@ const trackInfoResponse = await axios.get('https://ws.audioscrobbler.com/2.0/', 
 });
 
 const playcount = trackInfoResponse.data.track?.userplaycount||1; // Si no hay playcount, usa 1 por defecto
+const genre = trackInfoResponse.data.track?.toptags?.tag[0]?.name||'Unkown Genre';
 
 // 3️⃣ CREAR EL SCROBBLE CON EL PLAYCOUNT CORRECTO
 const scrobble = {
@@ -99,6 +100,7 @@ const scrobble = {
   date,
   count: playcount, // 🔥 AHORA `count` ES EL TOTAL DE VECES QUE SE HA ESCUCHADO LA CANCIÓN
   year: null,
+  genre,
   length: null
 };
 
