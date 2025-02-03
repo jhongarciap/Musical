@@ -21,8 +21,6 @@ async function fetchAlbumCover(albumName, artistName) {
   }
 }
 
-const axios = require('axios');
-
 // Función para obtener el ID del artista desde Spotify
 async function fetchSpotifyArtistId(artistName) {
   const token = '286cbc74b5c241a9a20ab338d85c8093'; // Necesitas autenticarte para obtener un token
