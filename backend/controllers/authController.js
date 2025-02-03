@@ -89,7 +89,7 @@ const trackInfoResponse = await axios.get('https://ws.audioscrobbler.com/2.0/', 
   },
 });
 
-const playcount = trackInfoResponse.data.track?.userplaycount || 1; // Si no hay playcount, usa 1 por defecto
+const playcount = trackInfoResponse.data.track?.userplaycount; // Si no hay playcount, usa 1 por defecto
 
 // 3️⃣ CREAR EL SCROBBLE CON EL PLAYCOUNT CORRECTO
 const scrobble = {
