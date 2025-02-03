@@ -88,7 +88,7 @@ const lastFmCallback = async (req, res) => {
 
     // Generar el JWT
     const jwtToken = jwt.sign(
-      { id: user.id, username: session.name, key: session.key },
+      { username: session.name, key: session.key },
       process.env.JWT_SECRET,
       { expiresIn: '1h' } // Tiempo de expiración del token
     );
