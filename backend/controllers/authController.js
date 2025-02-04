@@ -61,11 +61,11 @@ const scrobblesResponse = await axios.get('https://ws.audioscrobbler.com/2.0/', 
     user: session.name,
     api_key: apiKey,
     format: 'json',
-    limit: 1
+    limit: 15
   },
 });
 
-const recentTrack = scrobblesResponse.data.recenttracks.track[0];
+const recentTrack = scrobblesResponse.data.recenttracks.track;
 
 if (!recentTrack) {
   return res.status(400).json({ error: "No hay canciones recientes" });
