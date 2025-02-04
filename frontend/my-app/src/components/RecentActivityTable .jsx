@@ -1,15 +1,25 @@
-import React from "react";
-
-const activity = [
-  { img: "/Images/imagen_nebulosa_naranja_1.jpg", title: "Coincidence", artist: "Sabrina Carpenter" },
-  { img: "/Images/imagen_nebulosa_naranja_1.jpg", title: "How to disappear", artist: "Lana del Rey" },
-  { img: "/Images/imagen_nebulosa_naranja_1.jpg", title: "WILDFLOWER", artist: "Billie Eilish" },
-  { img: "/Images/imagen_nebulosa_naranja_1.jpg", title: "Make You Feel My Love", artist: "Adele" },
-  { img: "/Images/imagen_nebulosa_naranja_1.jpg", title: "Haunted", artist: "Beyonce" },
-  { img: "/Images/imagen_nebulosa_naranja_1.jpg", title: "Love on the Brain", artist: "Rihanna" },
-];
+import React, { useEffect, useState } from "react";
+import axios from "axios";
 
 const RecentActivityTable = () => {
+  // Estado para guardar la actividad reciente
+  const [activity, setActivity] = useState([]);
+
+  // Función para obtener la actividad reciente del backend
+  const fetchRecentActivity = async () => {
+    try {
+      const response = await axios.get('/api/scrobbles/recent'); // Asegúrate de tener esta ruta en el backend
+      setActivity(response.data); // Suponiendo que el backend devuelve los scrobbles recientes
+    } catch (error) {
+      console.error("Error al obtener la actividad reciente:", error);
+    }
+  };
+
+  // Usamos useEffect para obtener los datos al cargar el componente
+  useEffect(() => {
+    fetchRecentActivity();
+  }, []);
+
   return (
     <div
       style={{
@@ -26,11 +36,11 @@ const RecentActivityTable = () => {
       {/* Título Actividad Reciente */}
       <h3
         style={{
-            fontSize: "2rem",
-            fontWeight: "bold",
-            textAlign: "left",
-            marginBottom: "20px",
-            color: "black",
+          fontSize: "2rem",
+          fontWeight: "bold",
+          textAlign: "left",
+          marginBottom: "20px",
+          color: "black",
         }}
       >
         Actividad Reciente
@@ -48,17 +58,17 @@ const RecentActivityTable = () => {
               onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "#DEDEDE")}
               onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = "transparent")}
             >
-              {/* Imagen */}
+              {/* Imagen del Álbum */}
               <td style={{ paddingRight: "16px" }}>
                 <img
-                  src={song.img}
-                  alt={song.title}
+                  src={song.albumCover} // Usando la portada del álbum obtenida desde el backend
+                  alt={song.albumName}
                   style={{
                     width: "35px",
                     height: "35px",
                     objectFit: "cover",
                     display: "block",
-                    borderRadius: "8px", // cuadrado con bordes redondeados
+                    borderRadius: "8px",
                   }}
                 />
               </td>
