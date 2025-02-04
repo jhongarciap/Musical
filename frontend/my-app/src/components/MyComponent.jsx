@@ -9,6 +9,7 @@ import ScrobblesTable from "./ScrobblesTable";
 import TopArtistsTable from "./TopArtistsTable";
 import TopAlbumsTable from "./TopAlbumsTable";
 import RecentActivityTable from "./RecentActivityTable ";
+import GenresTable from "./GenresTable";
 
 function MyComponent() {
   return (
@@ -44,6 +45,9 @@ function MyComponent() {
             {/* Espacio*/}
             <div style={{ marginTop: "20px" }}></div>
             <RecentActivityTable />
+            {/* Espacio*/}
+            <div style={{ marginTop: "20px" }}></div>
+            <GenresTable />
             
           </div>
 
