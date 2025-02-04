@@ -10,6 +10,7 @@ import TopArtistsTable from "./TopArtistsTable";
 import TopAlbumsTable from "./TopAlbumsTable";
 import RecentActivityTable from "./RecentActivityTable ";
 import GenresTable from "./GenresTable";
+import ShareSong from "./ShareSong";
 
 function MyComponent() {
   return (
@@ -64,6 +65,8 @@ function MyComponent() {
           {/* Contenedor para TopArtistsTable a la derecha */}
           <div style={{ maxWidth: "300px", flexShrink: 0 }}>
             <TopArtistsTable />
+            <div style={{ marginTop: "20px" }}></div>
+            <ShareSong />
             <div style={{ marginTop: "20px" }}></div>
           </div>
         </div>
