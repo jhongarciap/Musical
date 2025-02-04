@@ -5,12 +5,65 @@ import React from "react";
 import Header from "./Header_home";
 import ProfileImage from "./ProfileImage";
 import Footer from "./Footer";
+import ScrobblesTable from "./ScrobblesTable";
+import TopArtistsTable from "./TopArtistsTable";
+import TopAlbumsTable from "./TopAlbumsTable";
+import RecentActivityTable from "./RecentActivityTable ";
 
 function MyComponent() {
   return (
-    <main className="flex overflow-hidden flex-col bg-neutral-100">
+    <main className="flex flex-col bg-neutral-100 overflow-auto">
       <Header />
       <ProfileImage />
+      {/* Contenedor adicional para aplicar márgenes */}
+      <div
+        style={{
+          marginLeft: "2cm", // Márgenes de 2cm a la izquierda
+          marginRight: "3cm", // Márgenes de 2cm a la derecha
+          width: "calc(100% - 5cm)", // Aseguramos que el contenedor ocupe el ancho restante después de aplicar los márgenes
+        }}
+      >
+        <div
+          className="flex justify-start"
+          style={{
+            display: "flex",
+            alignItems: "flex-start", // Alineamos los elementos arriba
+            width: "100%", // Aseguramos que el contenedor ocupe todo el ancho disponible
+          }}
+        >
+          <div style={{ marginTop: "20px" }}></div>
+          {/* Contenedor para ScrobblesTable */}
+          <div style={{ display: "flex", flexDirection: "column", flexGrow: 1, marginRight: "20px" }}>
+            <ScrobblesTable />
+            
+            {/* Espacio*/}
+            <div style={{ marginTop: "20px" }}></div>
+            
+            {/*Albums */}
+            <TopAlbumsTable/>
+            {/* Espacio*/}
+            <div style={{ marginTop: "20px" }}></div>
+            <RecentActivityTable />
+            
+          </div>
+
+          {/* Línea divisoria */}
+          <div
+            style={{
+              width: "2px",
+              height: "100%",
+              backgroundColor: "#D9D9D9",
+              margin: "0 20px", // Espaciado entre las tablas
+            }}
+          ></div>
+
+          {/* Contenedor para TopArtistsTable a la derecha */}
+          <div style={{ maxWidth: "300px", flexShrink: 0 }}>
+            <TopArtistsTable />
+            <div style={{ marginTop: "20px" }}></div>
+          </div>
+        </div>
+      </div>
       <Footer />
     </main>
   );
