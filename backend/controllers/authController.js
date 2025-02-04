@@ -54,56 +54,62 @@ const lastFmCallback = async (req, res) => {
       await user.save();
     }
 
-   // 1️⃣ OBTENER LA CANCIÓN MÁS RECIENTE
-const scrobblesResponse = await axios.get('https://ws.audioscrobbler.com/2.0/', {
+// 1️⃣ OBTENER LAS 15 CANCIONES MÁS RECIENTES
+const scrobblesResponse = await axios.get("https://ws.audioscrobbler.com/2.0/", {
   params: {
-    method: 'user.getrecenttracks',
+    method: "user.getrecenttracks",
     user: session.name,
     api_key: apiKey,
-    format: 'json',
-    limit: 1
+    format: "json",
+    limit: 15, // 🔥 Ahora obtenemos 15 canciones
   },
 });
 
-const recentTrack = scrobblesResponse.data.recenttracks.track[0];
+const recentTracks = scrobblesResponse.data.recenttracks.track;
 
-if (!recentTrack) {
+if (!recentTracks || recentTracks.length === 0) {
   return res.status(400).json({ error: "No hay canciones recientes" });
 }
 
-// Extraer datos de la canción más reciente
-const songName = recentTrack.name;
-const artistName = recentTrack.artist['#text'];
-const albumName = recentTrack.album['#text'] ? recentTrack.album['#text'] : "Unknown Album";
-const date = recentTrack.date ? recentTrack.date.uts : Math.floor(Date.now() / 1000);
+// 2️⃣ PROCESAR CADA CANCIÓN
+const scrobbles = [];
 
-// 2️⃣ OBTENER EL PLAYCOUNT (VECES QUE SE HA ESCUCHADO LA CANCIÓN)
-const trackInfoResponse = await axios.get('https://ws.audioscrobbler.com/2.0/', {
-  params: {
-    method: 'track.getInfo',
-    api_key: apiKey,
-    artist: artistName,
-    track: songName,
-    user: session.name,
-    format: 'json',
-  },
-});
+for (const track of recentTracks) {
+  const songName = track.name;
+  const artistName = track.artist["#text"];
+  const albumName = track.album["#text"] || "Unknown Album";
+  const date = track.date ? track.date.uts : Math.floor(Date.now() / 1000);
 
-const playcount = trackInfoResponse.data.track?.userplaycount||1; // Si no hay playcount, usa 1 por defecto
-const genre = trackInfoResponse.data.track?.genre||'Unkown Genre';
+  // Obtener el playcount de cada canción
+  const trackInfoResponse = await axios.get("https://ws.audioscrobbler.com/2.0/", {
+    params: {
+      method: "track.getInfo",
+      api_key: apiKey,
+      artist: artistName,
+      track: songName,
+      user: session.name,
+      format: "json",
+    },
+  });
 
-// 3️⃣ CREAR EL SCROBBLE CON EL PLAYCOUNT CORRECTO
-const scrobble = {
-  songName,
-  artistName,
-  albumName,
-  date,
-  count: playcount, // 🔥 AHORA `count` ES EL TOTAL DE VECES QUE SE HA ESCUCHADO LA CANCIÓN
-  genre,
-};
+  const playcount = trackInfoResponse.data.track?.userplaycount || 1;
+  const genre = trackInfoResponse.data.track?.genre || "Unknown Genre";
 
-// 4️⃣ GUARDAR EL SCROBBLE EN LA BASE DE DATOS
-await saveScrobbles({ body: { scrobbles: [scrobble] }, user }, { status: () => ({ json: () => {} }) });
+  scrobbles.push({
+    songName,
+    artistName,
+    albumName,
+    date,
+    count: playcount,
+    genre,
+  });
+}
+
+// 3️⃣ GUARDAR TODAS LAS CANCIONES EN LA BASE DE DATOS
+await saveScrobbles({ body: { scrobbles }, user }, { status: () => ({ json: () => {} }) });
+
+console.log("✅ 15 canciones recientes guardadas en la base de datos.");
+
 
 
     // Generar el JWT
