@@ -174,46 +174,5 @@ async function saveScrobbles(req, res) {
   }
 }
 
-// Función para obtener los scrobbles recientes con detalles de canción, artista y álbum
-async function getRecentScrobbles(req, res) {
-  try {
-    // Obtener los scrobbles recientes del usuario autenticado
-    const scrobbles = await Scrobble.findAll({
-      where: { id_user: req.user.id },
-      order: [['date', 'DESC']], // Ordenar por fecha, de más reciente a más antiguo
-      limit: 6, // Limitar los resultados a los 10 scrobbles más recientes
-      include: [
-        {
-          model: Song,
-          include: [
-            {
-              model: Artist,
-              attributes: ['name'] // Nombre del artista
-            },
-            {
-              model: Album,
-              attributes: ['name', 'cover'], // Nombre del álbum y la portada
-            }
-          ]
-        }
-      ]
-    });
 
-    // Mapear los scrobbles para incluir la información relevante
-    const formattedScrobbles = scrobbles.map(scrobble => ({
-      songName: scrobble.Song.name,
-      artistName: scrobble.Song.Artist.name,
-      albumName: scrobble.Song.Album.name,
-      albumCover: scrobble.Song.Album.cover,
-      scrobbleDate: scrobble.date,
-    }));
-
-    // Responder con los scrobbles formateados
-    return res.json(formattedScrobbles);
-  } catch (error) {
-    console.error("🚨 Error obteniendo los scrobbles recientes:", error);
-    return res.status(500).json({ error: 'Error obteniendo los scrobbles recientes' });
-  }
-}
-
-module.exports = { saveScrobbles, getRecentScrobbles };
+module.exports = { saveScrobbles };

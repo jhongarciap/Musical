@@ -8,7 +8,6 @@ import Footer from "./Footer";
 import ScrobblesTable from "./ScrobblesTable";
 import TopArtistsTable from "./TopArtistsTable";
 import TopAlbumsTable from "./TopAlbumsTable";
-import RecentActivityTable from "./RecentActivityTable ";
 import GenresTable from "./GenresTable";
 import ShareSong from "./ShareSong";
 
