@@ -44,8 +44,6 @@ function MyComponent() {
             {/*Albums */}
             <TopAlbumsTable/>
             {/* Espacio*/}
-            <div style={{ marginTop: "20px" }}></div>
-            <RecentActivityTable />
             {/* Espacio*/}
             <div style={{ marginTop: "20px" }}></div>
             <GenresTable />
